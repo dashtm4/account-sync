@@ -1,0 +1,71 @@
+Resources:
+  GatewayResponseDefault4XX:
+    Type: 'AWS::ApiGateway::GatewayResponse'
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+      ResponseType: DEFAULT_4XX
+      RestApiId:
+        Ref: 'ApiGatewayRestApi'
+
+  CognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+     UserPoolName: ${self:custom.stage}-user-pool
+     UsernameAttributes:
+      - email
+     AutoVerifiedAttributes:
+      - email
+
+  CognitoUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: ${self:custom.stage}-user-pool-client
+      UserPoolId:
+        Ref: CognitoUserPool
+      ExplicitAuthFlows:
+        - ADMIN_NO_SRP_AUTH
+      GenerateSecret: false     
+
+  ApiGatewayAuthorizer:
+    DependsOn:
+      - ApiGatewayRestApi
+    Type: AWS::ApiGateway::Authorizer
+    Properties:
+      Name: CognitoAuthorizer
+      IdentitySource: method.request.header.Authorization
+      RestApiId:
+        Ref: ApiGatewayRestApi
+      Type: COGNITO_USER_POOLS
+      ProviderARNs:
+        - Fn::GetAtt: [CognitoUserPool, Arn]
+
+  DB:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ${self:custom.db.accsynctablename}
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions: 
+       - AttributeName: "UserName"
+         AttributeType: "S"
+       - AttributeName: "AccountName"
+         AttributeType: "S"
+       - AttributeName: "TaxCode"
+         AttributeType: "N"      
+      KeySchema:
+       - AttributeName: "UserName"
+         KeyType: "HASH"
+      GlobalSecondaryIndexes:
+       - IndexName: "AccountName"
+         KeySchema:
+           - AttributeName: "AccountName"
+             KeyType: "HASH"
+         Projection:
+           ProjectionType: ALL  
+       - IndexName: "TaxCode"
+         KeySchema: 
+           - AttributeName: "TaxCode"
+             KeyType: "HASH"
+         Projection:
+           ProjectionType: ALL  

@@ -1,0 +1,14 @@
+{
+    "extends": [
+        "airbnb-typescript/base"
+    ],
+    "parserOptions": {
+        "project": "./tsconfig.json"
+    },
+    "rules": {
+        "indent": "off",
+        "@typescript-eslint/indent": ["error", 4],
+        "no-underscore-dangle": ["error", { "allow": ["_id"] }],
+        "import/prefer-default-export": "off"
+    }
+}

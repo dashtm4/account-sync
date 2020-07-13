@@ -1,0 +1,48 @@
+service:
+  name: account-sync
+
+plugins:
+  - serverless-dotenv-plugin  
+
+resources: ${file(serverless/resources.yaml)}
+
+provider: 
+  name: aws
+  runtime: nodejs10.x
+  stage: ${self:custom.stage}
+  region: ${self:custom.region}
+  memorySize: 512
+  timeout: 30
+  variableSyntax: "\\${((?!AWS|SecretName)[ ~:a-zA-Z0-9._@'\",\\-\\/\\(\\)\\*\\?]+?)}"
+
+functions:
+  FirstLambda:
+   handler: src/lambdas/first.handler
+   events:
+     - http:
+         path: first/
+         method: get
+         cors: true
+         authorizer: ${self:custom.authorizer}
+           
+
+  SecondLambda:       
+   handler: src/lambdas/second.handler
+   events:
+     - http:
+         path: second/
+         method: post
+         cors: true
+         authorizer: ${self:custom.authorizer}
+
+custom: 
+  stage: ${opt:stage, env:STAGE}
+  region: ${opt:region, 'ap-southeast-2'}
+  db: 
+    accsynctablename: users
+  authorizer: 
+    type: COGNITO_USER_POOLS
+    authorizerId:
+      Ref: ApiGatewayAuthorizer
+
+        

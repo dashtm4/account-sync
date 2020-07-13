@@ -1,0 +1,36 @@
+{
+  "name": "account-sync",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "sls": "sls -c ./serverless/serverless.yaml",
+    "build": "npm run sls package",
+    "deploy": "npm run sls deploy",
+    "undeploy": "npm run sls remove",
+    "start": "npm run sls offline start -- --skipCacheInvalidation",
+    "tslint": "eslint --ext .ts ./src"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run tslint"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scottefein/accountant-sync/projects/1"
+  },
+  "author": "LambdaTeam",
+  "license": "ISC",
+  "dependencies": {
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.6"
+  },
+  "devDependencies": {
+    "@types/node": "^14.0.22",
+    "@typescript-eslint/eslint-plugin": "^3.6.0",
+    "eslint-config-airbnb-typescript": "^8.0.2",
+    "eslint-plugin-import": "^2.22.0",
+    "serverless-dotenv-plugin": "^2.4.2"
+  }
+}
