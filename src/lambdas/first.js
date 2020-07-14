@@ -1,3 +1,0 @@
-exports.module = (event, context) => {
-    
-}

@@ -1,8 +1,14 @@
 service:
   name: account-sync
 
+package:
+  individually: false
+  exclude:
+    - node_modules/**
+
 plugins:
-  - serverless-dotenv-plugin  
+  - serverless-dotenv-plugin
+  - serverless-webpack
 
 resources: ${file(serverless/resources.yaml)}
 
@@ -13,9 +19,19 @@ provider:
   region: ${self:custom.region}
   memorySize: 512
   timeout: 30
+  environment: 
+    tableName: ${self:custom.db.accsynctablename}
   variableSyntax: "\\${((?!AWS|SecretName)[ ~:a-zA-Z0-9._@'\",\\-\\/\\(\\)\\*\\?]+?)}"
 
 functions:
+  SignUp:
+   handler: src/lambdas/signUp.handler
+   events:
+    - http:
+        path: signUp/
+        method: post
+        cors: true
+
   FirstLambda:
    handler: src/lambdas/first.handler
    events:
@@ -23,8 +39,7 @@ functions:
          path: first/
          method: get
          cors: true
-         authorizer: ${self:custom.authorizer}
-           
+         authorizer: ${self:custom.authorizer}      
 
   SecondLambda:       
    handler: src/lambdas/second.handler
@@ -39,10 +54,13 @@ custom:
   stage: ${opt:stage, env:STAGE}
   region: ${opt:region, 'ap-southeast-2'}
   db: 
-    accsynctablename: users
+    accsynctablename: users_table
   authorizer: 
     type: COGNITO_USER_POOLS
     authorizerId:
       Ref: ApiGatewayAuthorizer
+  webpack:
+    webpackConfig: webpack.config.ts
+    includeModules: false
 
         

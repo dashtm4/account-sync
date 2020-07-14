@@ -23,11 +23,24 @@
   "author": "LambdaTeam",
   "license": "ISC",
   "dependencies": {
+    "@hapi/boom": "^9.1.0",
+    "aws-sdk": "^2.713.0",
+    "cache-loader": "^4.1.0",
+    "eslint": "^7.4.0",
+    "middy": "^0.36.0",
+    "serverless-webpack": "^5.3.2",
+    "source-map-loader": "^1.0.1",
+    "ts-loader": "^8.0.0",
     "ts-node": "^8.10.2",
-    "typescript": "^3.9.6"
+    "typescript": "^3.9.6",
+    "webpack": "^4.43.0",
+    "webpack-node-externals": "^2.5.0"
   },
   "devDependencies": {
+    "@types/aws-lambda": "^8.10.59",
     "@types/node": "^14.0.22",
+    "@types/webpack": "^4.41.21",
+    "@types/webpack-node-externals": "^1.7.1",
     "@typescript-eslint/eslint-plugin": "^3.6.0",
     "eslint-config-airbnb-typescript": "^8.0.2",
     "eslint-plugin-import": "^2.22.0",
