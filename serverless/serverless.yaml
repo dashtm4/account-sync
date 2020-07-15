@@ -36,6 +36,8 @@ provider:
 
   environment: 
     tableName: ${self:custom.db.accsynctablename}
+    clientSecret: ${self:custom.clientsecret}
+    clientId: ${self:custom.clientid}
   variableSyntax: "\\${((?!AWS|SecretName)[ ~:a-zA-Z0-9._@'\",\\-\\/\\(\\)\\*\\?]+?)}"
 
 functions:
@@ -48,7 +50,7 @@ functions:
         cors: true
 
   FirstLambda:
-   handler: src/lambdas/first.handler
+   handler: src/lambdas/storeTokens.handler
    events:
      - http:
          path: first/
@@ -56,11 +58,11 @@ functions:
          cors: true
          authorizer: ${self:custom.authorizer}      
 
-  SecondLambda:       
-   handler: src/lambdas/second.handler
+  IntuitSignInRedirect:       
+   handler: src/lambdas/intuitSignInRedirect.handler
    events:
      - http:
-         path: second/
+         path: intuitSignIn/
          method: post
          cors: true
          authorizer: ${self:custom.authorizer}
@@ -70,6 +72,8 @@ custom:
   region: ${opt:region, 'ap-southeast-2'}
   db: 
     accsynctablename: users_table
+  clientsecret: ${env:CLIENT_SECRET}
+  clientid: ${env:CLIENT_ID}
   authorizer: 
     type: COGNITO_USER_POOLS
     authorizerId:
@@ -78,5 +82,3 @@ custom:
     webpackConfig: webpack.config.ts
     includeModules: true
     packager: npm
-
-        

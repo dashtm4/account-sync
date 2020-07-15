@@ -88,6 +88,10 @@ export interface SignUpEvent {
     cognitoId: string
 }
 
+export interface ATokenEvent {
+    code: string;
+}
+
 export interface DefaultEvent {
     text: string;
 }

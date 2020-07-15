@@ -23,9 +23,11 @@ const rawHandler = async (event: APIGatewayEvent<SignUpEvent>)
             TableName: process.env.tableName!,
             Key: { Email: event.body.email },
         }).promise();
-        if (Item) return Boom.notAcceptable('User already exists');
+        if (Item) {
+            throw Boom.notAcceptable('User already exists');
+        }
     } catch (e) {
-        return Boom.badData(e);
+        throw Boom.badData(e);
     }
 
     const params = {
@@ -38,7 +40,7 @@ const rawHandler = async (event: APIGatewayEvent<SignUpEvent>)
     try {
         await dynamoDb.put(params).promise();
     } catch (e) {
-        Boom.internal('Error during insert');
+        throw Boom.internal('Error during insert');
     }
 
     return { message: 'Successfully signed new user' };
