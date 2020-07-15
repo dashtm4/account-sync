@@ -9,6 +9,7 @@ package:
 plugins:
   - serverless-dotenv-plugin
   - serverless-webpack
+  - serverless-iam-roles-per-function
 
 resources: ${file(serverless/resources.yaml)}
 
@@ -19,6 +20,20 @@ provider:
   region: ${self:custom.region}
   memorySize: 512
   timeout: 30
+  iamRoleStatements:
+    - Effect: Allow
+      Action: 
+        - dynamodb:* 
+      Resource: 
+        Fn::Join:
+          - ':'
+          - - arn
+            - aws
+            - dynamodb
+            - ${self:custom.region}
+            - !Ref AWS::AccountId
+            - table/${self:custom.db.accsynctablename}
+
   environment: 
     tableName: ${self:custom.db.accsynctablename}
   variableSyntax: "\\${((?!AWS|SecretName)[ ~:a-zA-Z0-9._@'\",\\-\\/\\(\\)\\*\\?]+?)}"
@@ -61,6 +76,7 @@ custom:
       Ref: ApiGatewayAuthorizer
   webpack:
     webpackConfig: webpack.config.ts
-    includeModules: false
+    includeModules: true
+    packager: npm
 
         

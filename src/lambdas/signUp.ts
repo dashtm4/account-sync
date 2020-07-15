@@ -1,5 +1,6 @@
 import AWS from 'aws-sdk';
 import middy from 'middy';
+import { jsonBodyParser } from 'middy/middlewares';
 import Boom from '@hapi/boom';
 import { APIGatewayEvent, SignUpEvent } from '../types/aws';
 import { APIGatewayResponse } from '../utils/aws';
@@ -17,15 +18,18 @@ const rawHandler = async (event: APIGatewayEvent<SignUpEvent>)
     console.log(event);
     if (!event.body) return Boom.badData('Body was not provided');
 
-    const user = dynamoDb.get({
-        TableName: process.env.tableName || 'users',
-        Key: { Email: event.body.email },
-    });
-
-    if (user) return Boom.notAcceptable('User already exists');
+    try {
+        const { Item } = await dynamoDb.get({
+            TableName: process.env.tableName!,
+            Key: { Email: event.body.email },
+        }).promise();
+        if (Item) return Boom.notAcceptable('User already exists');
+    } catch (e) {
+        return Boom.badData(e);
+    }
 
     const params = {
-        TableName: process.env.tableName || 'users',
+        TableName: process.env.tableName!,
         Item: {
             Email: event.body.email,
             CognitoId: event.body.cognitoId,
@@ -41,4 +45,5 @@ const rawHandler = async (event: APIGatewayEvent<SignUpEvent>)
 };
 
 export const handler = middy(rawHandler)
+    .use(jsonBodyParser())
     .use(apiGatewayResponse<APIGatewayEvent<SignUpEvent>, APIGatewayResponse<SignUpResponse>>());
