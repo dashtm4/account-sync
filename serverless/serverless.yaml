@@ -33,9 +33,22 @@ provider:
             - ${self:custom.region}
             - !Ref AWS::AccountId
             - table/${self:custom.db.accsynctablename}
+    - Effect: Allow
+      Action: 
+        - dynamodb:* 
+      Resource: 
+        Fn::Join:
+          - ':'
+          - - arn
+            - aws
+            - dynamodb
+            - ${self:custom.region}
+            - !Ref AWS::AccountId
+            - table/${self:custom.db.clientstablename}        
 
   environment: 
-    tableName: ${self:custom.db.accsynctablename}
+    usersTable: ${self:custom.db.accsynctablename}
+    clientsTable: ${self:custom.db.clientstablename}
     clientSecret: ${self:custom.clientsecret}
     clientId: ${self:custom.clientid}
   variableSyntax: "\\${((?!AWS|SecretName)[ ~:a-zA-Z0-9._@'\",\\-\\/\\(\\)\\*\\?]+?)}"
@@ -50,21 +63,26 @@ functions:
         cors: true
         authorizer: ${self:custom.authorizer}
 
+  RefreshTokens:
+    handler: src/lambdas/refreshToken.handler
+    events:
+      - schedule: rate(1 hour)  
+
   StoreIntuitTokens:
    handler: src/lambdas/storeTokens.handler
    events:
      - http:
          path: tokens/
-         method: get
+         method: post
          cors: true
-         authorizer: ${self:custom.authorizer}      
+         authorizer: ${self:custom.authorizer}
 
   IntuitSignInRedirect:       
    handler: src/lambdas/intuitSignInRedirect.handler
    events:
      - http:
          path: intuitSignIn/
-         method: post
+         method: get
          cors: true
          authorizer: ${self:custom.authorizer}
 
@@ -73,6 +91,7 @@ custom:
   region: ${opt:region, 'ap-southeast-2'}
   db: 
     accsynctablename: users_table
+    clientstablename: clients_table
   clientsecret: ${env:CLIENT_SECRET}
   clientid: ${env:CLIENT_ID}
   authorizer: 

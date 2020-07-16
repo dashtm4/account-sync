@@ -83,6 +83,10 @@ export interface CognitoTokenPayload {
     groups: string;
 }
 
+export interface DefaultResponse {
+    message: string;
+}
+
 export interface SignUpEvent {
     email: string,
     cognitoId: string
