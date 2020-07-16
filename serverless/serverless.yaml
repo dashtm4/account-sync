@@ -48,12 +48,13 @@ functions:
         path: signUp/
         method: post
         cors: true
+        authorizer: ${self:custom.authorizer}
 
-  FirstLambda:
+  StoreIntuitTokens:
    handler: src/lambdas/storeTokens.handler
    events:
      - http:
-         path: first/
+         path: tokens/
          method: get
          cors: true
          authorizer: ${self:custom.authorizer}      
