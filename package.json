@@ -23,6 +23,8 @@
   "author": "LambdaTeam",
   "license": "ISC",
   "dependencies": {
+    "@aws/dynamodb-data-mapper": "^0.7.3",
+    "@aws/dynamodb-data-mapper-annotations": "^0.7.3",
     "@hapi/boom": "^9.1.0",
     "@types/uuid": "^8.0.0",
     "aws-sdk": "^2.713.0",
