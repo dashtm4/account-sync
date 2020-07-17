@@ -1,12 +1,6 @@
 /* eslint-disable no-await-in-loop */
 import AWS from 'aws-sdk';
-import middy from 'middy';
-import Boom from '@hapi/boom';
-import { jsonBodyParser } from 'middy/middlewares';
 import OAuthClient from 'intuit-oauth';
-import { apiGatewayResponse } from '../middlewares/apiGateWayResponse';
-import { APIGatewayResponse } from '../utils/aws';
-import { DefaultResponse, APIGatewayEvent } from '../types/aws';
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
@@ -14,19 +8,20 @@ const oauthClient = new OAuthClient({
     clientId: process.env.clientId!,
     clientSecret: process.env.clientSecret!,
     environment: 'sandbox',
-    redirectUri: 'http://localhost:8080',
 });
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const rawHandler = async (event: APIGatewayEvent<null>)
-: Promise<APIGatewayResponse<DefaultResponse>> => {
+export const handler = async (): Promise<void> => {
     const tableName = process.env.clientsTable!;
 
     const { Items } = await dynamoDb.scan({
         TableName: process.env.clientsTable!,
     }).promise();
 
-    if (!Items) throw Boom.internal('No clients in database yet');
+    if (!Items || !Items.length) {
+        // eslint-disable-next-line no-console
+        console.log('No clients in database yet');
+        return Promise.resolve();
+    }
 
     const itemsForUpdate = [];
 
@@ -53,13 +48,10 @@ const rawHandler = async (event: APIGatewayEvent<null>)
                 [tableName]: [...itemsForUpdate],
             },
         }).promise;
+        return Promise.resolve();
     } catch (e) {
-        throw Boom.internal('Error during batch insert');
+        // eslint-disable-next-line no-console
+        console.log('Error during batch insert');
+        return Promise.resolve();
     }
-
-    return { message: 'Successfully refreshed tokens' };
 };
-
-export const handler = middy(rawHandler)
-    .use(jsonBodyParser())
-    .use(apiGatewayResponse<APIGatewayEvent<null>, APIGatewayResponse<DefaultResponse>>());

@@ -1,7 +1,6 @@
 import Boom from '@hapi/boom';
 import middy from 'middy';
 import { jsonBodyParser } from 'middy/middlewares';
-// eslint-disable-next-line import/extensions
 import OAuthClient from 'intuit-oauth';
 import { APIGatewayEvent, DefaultEvent } from '../types/aws';
 import { APIGatewayResponse } from '../utils/aws';
@@ -15,7 +14,7 @@ const oauthClient = new OAuthClient({
     clientId: process.env.clientId!,
     clientSecret: process.env.clientSecret!,
     environment: 'sandbox',
-    redirectUri: 'http://localhost:8080',
+    redirectUri: 'https://www.google.com/',
 });
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const rawHandler = async (event: APIGatewayEvent<DefaultEvent>)

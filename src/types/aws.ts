@@ -94,6 +94,7 @@ export interface SignUpEvent {
 
 export interface ATokenEvent {
     code: string;
+    realmId: string;
 }
 
 export interface DefaultEvent {
