@@ -51,6 +51,8 @@ provider:
     clientsTable: ${self:custom.db.clientstablename}
     clientSecret: ${self:custom.clientsecret}
     clientId: ${self:custom.clientid}
+    environment: ${self:custom.env}
+    redirectUri: ${self:custom.redirecturi}
   variableSyntax: "\\${((?!AWS|SecretName)[ ~:a-zA-Z0-9._@'\",\\-\\/\\(\\)\\*\\?]+?)}"
 
 functions:
@@ -94,6 +96,8 @@ custom:
     clientstablename: clients_table
   clientsecret: ${env:CLIENT_SECRET}
   clientid: ${env:CLIENT_ID}
+  env: ${env:ENVIRONMENT}
+  redirecturi: ${env:REDIRECT_URI}
   authorizer: 
     type: COGNITO_USER_POOLS
     authorizerId:

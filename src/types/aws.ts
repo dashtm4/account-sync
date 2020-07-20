@@ -93,7 +93,10 @@ export interface SignUpEvent {
 }
 
 export interface ATokenEvent {
-    code: string;
+    responseUri: string;
+}
+
+export interface GetReportEvent {
     realmId: string;
 }
 

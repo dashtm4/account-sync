@@ -7,7 +7,7 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient();
 const oauthClient = new OAuthClient({
     clientId: process.env.clientId!,
     clientSecret: process.env.clientSecret!,
-    environment: 'sandbox',
+    environment: process.env.environment,
 });
 
 export const handler = async (): Promise<void> => {

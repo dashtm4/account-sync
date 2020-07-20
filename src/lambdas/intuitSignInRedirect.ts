@@ -13,15 +13,15 @@ interface IntuitAPIResponse {
 const oauthClient = new OAuthClient({
     clientId: process.env.clientId!,
     clientSecret: process.env.clientSecret!,
-    environment: 'sandbox',
-    redirectUri: 'https://www.google.com/',
+    environment: process.env.environment,
+    redirectUri: process.env.redirectUri,
 });
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const rawHandler = async (event: APIGatewayEvent<DefaultEvent>)
 : Promise<APIGatewayResponse<IntuitAPIResponse>> => {
     try {
         const authUri: string = oauthClient.authorizeUri({
-            scope: [OAuthClient.scopes.Accounting, OAuthClient.scopes.OpenId],
+            scope: [OAuthClient.scopes.Accounting],
         });
 
         return Promise.resolve({ redirectUri: authUri });
