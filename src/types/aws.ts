@@ -102,7 +102,6 @@ export interface ATokenEvent {
 }
 
 export interface GetReportEvent {
-    realmId: string;
     companySettings: {
         reportType: string;
         taxSoftware: string;

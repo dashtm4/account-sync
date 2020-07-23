@@ -87,7 +87,7 @@ functions:
     handler: src/lambdas/storeReportToDb.handler
     events:
       - http:
-          path: report-settings/
+          path: report-settings/{realmId}
           method: post
           cors: true    
 

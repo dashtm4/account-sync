@@ -226,7 +226,7 @@ const rawHandler = async (
     const { Items } = await dynamoDb.scan({
         TableName: process.env.clientsTable!,
         FilterExpression: 'RealmId = :realmId',
-        ExpressionAttributeValues: { ':realmId': event.body.realmId },
+        ExpressionAttributeValues: { ':realmId': event.pathParameters.realmId },
     }).promise();
 
     if (Items) {
