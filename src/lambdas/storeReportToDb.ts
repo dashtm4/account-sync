@@ -130,39 +130,45 @@ const addAcctNumber = (
 const getAndProcessReport = async (realmId: string,
     endPeriod: Date, Items: AWS.DynamoDB.DocumentClient.ItemList) => {
     let report: QBTrialBalanceReport;
+    let error: boolean = false;
+
+    let tokens = [Items[0].AccessToken, Items[0].RefreshToken];
 
     try {
-        report = await getReport(realmId, Items[0].AccessToken, endPeriod);
+        report = await getReport(realmId, tokens[0], endPeriod);
     } catch (e) {
         if (e.response && e.response.status === 401) {
             // eslint-disable-next-line no-console
             console.log('Token expired');
+            error = true;
         } else throw Boom.internal('Something happened', e);
     }
 
-    const newToken = await getNewToken(Items[0].RefreshToken);
+    if (error) {
+        tokens = await getNewToken(Items[0].RefreshToken);
 
-    await dynamoDb.update({
-        TableName: process.env.clientsTable!,
-        Key: { Id: Items[0].Id },
-        UpdateExpression: 'set #atoken = :t1, #rtoken = :t2',
-        ExpressionAttributeNames: {
-            '#atoken': 'AccessToken',
-            '#rtoken': 'RefreshToken',
-        },
-        ExpressionAttributeValues: {
-            ':t1': newToken[0],
-            ':t2': newToken[1],
-        },
-    }).promise();
+        await dynamoDb.update({
+            TableName: process.env.clientsTable!,
+            Key: { Id: Items[0].Id },
+            UpdateExpression: 'set #atoken = :t1, #rtoken = :t2',
+            ExpressionAttributeNames: {
+                '#atoken': 'AccessToken',
+                '#rtoken': 'RefreshToken',
+            },
+            ExpressionAttributeValues: {
+                ':t1': tokens[0],
+                ':t2': tokens[1],
+            },
+        }).promise();
+    }
 
-    report = await getReport(realmId, newToken[0], endPeriod);
+    report = await getReport(realmId, tokens[0], endPeriod);
 
     const processedReport = processReport(report);
 
     const ids = processedReport.Accounts.map((account) => account.Id);
 
-    const accountsInfo = await getAccountsInfo(realmId, newToken[0], ids);
+    const accountsInfo = await getAccountsInfo(realmId, tokens[0], ids);
 
     return addAcctNumber(accountsInfo, processedReport);
 };
