@@ -87,6 +87,11 @@ export interface DefaultResponse {
     message: string;
 }
 
+export interface SuccessReportStoreResponse {
+    message: string;
+    id: string;
+}
+
 export interface SignUpEvent {
     email: string,
     cognitoId: string
@@ -98,6 +103,12 @@ export interface ATokenEvent {
 
 export interface GetReportEvent {
     realmId: string;
+    companySettings: {
+        reportType: string;
+        taxSoftware: string;
+        endPeriod: Date;
+    };
+    entityType: string;
 }
 
 export interface DefaultEvent {

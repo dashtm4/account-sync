@@ -22,8 +22,8 @@ const oauthClient = new OAuthClient({
     redirectUri: process.env.redirectUri,
 });
 
-const rawHandler = async (event: APIGatewayEvent<ATokenEvent>)
-: Promise<APIGatewayResponse<DefaultResponse>> => {
+const rawHandler = async (
+    event: APIGatewayEvent<ATokenEvent>): Promise<APIGatewayResponse<DefaultResponse>> => {
     const { responseUri } = event.body;
 
     // console.log(event.body);
@@ -33,6 +33,19 @@ const rawHandler = async (event: APIGatewayEvent<ATokenEvent>)
         const authResponse = await oauthClient.createToken(responseUri);
 
         const tokens = authResponse.getToken();
+
+        const dbClient = await dynamoDb.scan({
+            TableName: process.env.clients!,
+            FilterExpression: 'RealmId = :realmId and CognitoId = :cognitoId',
+            ExpressionAttributeValues: {
+                ':realmId': tokens.realmId,
+                ':cognitoId': cognitoId,
+            },
+        }).promise();
+
+        if (dbClient) {
+            throw Boom.notAcceptable('Client already added');
+        }
 
         const { data } = await instance.get(`company/${tokens.realmId}/query?query=select*from CompanyInfo`, {
             headers: {

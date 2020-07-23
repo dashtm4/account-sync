@@ -44,11 +44,24 @@ provider:
             - dynamodb
             - ${self:custom.region}
             - !Ref AWS::AccountId
-            - table/${self:custom.db.clientstablename}        
+            - table/${self:custom.db.clientstablename}
+    - Effect: Allow
+      Action: 
+        - dynamodb:* 
+      Resource: 
+        Fn::Join:
+          - ':'
+          - - arn
+            - aws
+            - dynamodb
+            - ${self:custom.region}
+            - !Ref AWS::AccountId
+            - table/${self:custom.db.reportstablename}                 
 
   environment: 
     usersTable: ${self:custom.db.accsynctablename}
     clientsTable: ${self:custom.db.clientstablename}
+    reportsTable: ${self:custom.db.reportstablename}
     clientSecret: ${self:custom.clientsecret}
     clientId: ${self:custom.clientid}
     environment: ${self:custom.env}
@@ -68,7 +81,15 @@ functions:
   RefreshTokens:
     handler: src/lambdas/refreshToken.handler
     events:
-      - schedule: rate(1 hour)  
+      - schedule: rate(1 hour)
+   
+  GetReportFromIntuit:
+    handler: src/lambdas/storeReportToDb.handler
+    events:
+      - http:
+          path: report-settings/
+          method: post
+          cors: true    
 
   StoreIntuitTokens:
    handler: src/lambdas/storeTokens.handler
@@ -94,6 +115,7 @@ custom:
   db: 
     accsynctablename: users_table
     clientstablename: clients_table
+    reportstablename: reports_table
   clientsecret: ${env:CLIENT_SECRET}
   clientid: ${env:CLIENT_ID}
   env: ${env:ENVIRONMENT}
