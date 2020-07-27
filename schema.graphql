@@ -1,0 +1,83 @@
+schema {
+    query: Query
+    mutation: Mutation
+}
+
+type Query {
+    getClient(RealmId: String!): Client!
+    getTaxCodes(EntityType: String!): [TaxCode]
+    getReport(Id: String!): Report
+    getClientIncognitoId(RealmId: String!): String
+}
+
+type Mutation {
+    updateReport(
+        Accounts: AccountInput!
+    ): Report!
+}
+
+type Client {
+    Id: String!
+    AccessToken: String!
+    RefreshToken: String!
+    CognitoId: String!
+    RealmId: String!
+    CompanyName: String
+}
+
+type TaxCode {
+    Id: String!
+    EntityType: String!
+    FormLine: String!
+    TaxCode: String!
+    TaxCodeDescription: String!
+    Toggle: String!
+}
+
+type Report {
+    Id: String!
+    ClientId: String!
+    EntityType: String!
+    EndDate: String!
+    ReportType: String!
+    Software: String!
+    Accounts: Accounts
+}
+
+input AccountInput {
+    Accounts: [Account!]
+    CreatedAt: String
+    EndPeriod: String
+    Id: String
+    ReportBasis: String
+    StartPeriod: String
+    Total: Total
+}
+
+type Account {
+    AccountName: String
+    ValueCents: Float
+    Id: String
+    Type: String
+    AcctNumber: String
+}
+
+type Accounts {
+    Accounts: [Account!]
+    CreatedAt: String
+    EndPeriod: String
+    Id: String
+    ReportBasis: String
+    StartPeriod: String
+    Total: Total
+}
+
+type Total{
+     CreditCents: Float
+     DebitCents: Float
+}
+
+type User {
+    Email: String!
+    CognitoId: String!
+}

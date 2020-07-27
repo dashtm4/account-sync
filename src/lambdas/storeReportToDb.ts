@@ -23,7 +23,7 @@ const oauthClient = new OAuthClient({
 });
 
 const instance = axios.create({
-    baseURL: 'https://sandbox-quickbooks.api.intuit.com/v3/',
+    baseURL: process.env.intuitAPI!,
 });
 
 const getNewToken = async (refreshToken: string): Promise<string[]> => {

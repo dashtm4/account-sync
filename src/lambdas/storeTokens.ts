@@ -10,7 +10,7 @@ import { APIGatewayResponse } from '../utils/aws';
 import { apiGatewayResponse } from '../middlewares/apiGateWayResponse';
 
 const instance = axios.create({
-    baseURL: 'https://sandbox-quickbooks.api.intuit.com/v3/',
+    baseURL: process.env.intuitAPI,
 });
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();

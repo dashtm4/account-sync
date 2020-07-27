@@ -8,9 +8,10 @@ package:
 
 plugins:
   - serverless-dotenv-plugin
+  - serverless-appsync-plugin
   - serverless-webpack
   - serverless-iam-roles-per-function
-
+ 
 resources: ${file(serverless/resources.yaml)}
 
 provider: 
@@ -56,7 +57,31 @@ provider:
             - dynamodb
             - ${self:custom.region}
             - !Ref AWS::AccountId
-            - table/${self:custom.db.reportstablename}                 
+            - table/${self:custom.db.reportstablename}
+    - Effect: Allow
+      Action: 
+        - dynamodb:* 
+      Resource: 
+        Fn::Join:
+          - ':'
+          - - arn
+            - aws
+            - dynamodb
+            - ${self:custom.region}
+            - !Ref AWS::AccountId
+            - table/${self:custom.db.taxcodestablename}                             
+    - Effect: Allow
+      Action:
+        - appsync:GraphQL
+      Resource: 
+        - Fn::Join:
+            - '/'
+            - - !Ref GraphQlApi
+              - '*'
+        # - Fn::Join:
+        #     - '/'
+        #     - - !Ref GraphQlApi
+        #       - types/Query/fields/getReport           
 
   environment: 
     usersTable: ${self:custom.db.accsynctablename}
@@ -66,6 +91,7 @@ provider:
     clientId: ${self:custom.clientid}
     environment: ${self:custom.env}
     redirectUri: ${self:custom.redirecturi}
+    intuitAPI: ${self:custom.intuituri}
   variableSyntax: "\\${((?!AWS|SecretName)[ ~:a-zA-Z0-9._@'\",\\-\\/\\(\\)\\*\\?]+?)}"
 
 functions:
@@ -89,7 +115,8 @@ functions:
       - http:
           path: report-settings/{realmId}
           method: post
-          cors: true    
+          cors: true
+          authorizer: ${self:custom.authorizer}    
 
   StoreIntuitTokens:
    handler: src/lambdas/storeTokens.handler
@@ -116,10 +143,12 @@ custom:
     accsynctablename: users_table
     clientstablename: clients_table
     reportstablename: reports_table
+    taxcodestablename: taxcodes_table
   clientsecret: ${env:CLIENT_SECRET}
   clientid: ${env:CLIENT_ID}
   env: ${env:ENVIRONMENT}
   redirecturi: ${env:REDIRECT_URI}
+  intuituri: ${env:INTUIT_API_URI}
   authorizer: 
     type: COGNITO_USER_POOLS
     authorizerId:
@@ -128,3 +157,54 @@ custom:
     webpackConfig: webpack.config.ts
     includeModules: true
     packager: npm
+  appSync:
+    name: ${self:service.name}
+    authenticationType: API_KEY
+    # userPoolConfig:
+    #    awsRegion: ${self:custom.region}
+    #    userPoolId: !Ref CognitoUserPool
+    #    defaultAction: "ALLOW"
+    mappingTemplates:
+      - dataSource: Clients
+        type: Query
+        field: getClient
+        request: 'scanClient-request-mapping-template.vtl'
+        response: 'common-response-mapping-template.vtl'
+      - dataSource: Clients
+        type: Query
+        field: getClientIncognitoId
+        request: 'scanClient-request-mapping-template.vtl'
+        response: 'common-response-mapping-template.vtl'  
+      - dataSource: Reports
+        type: Query
+        field: getReport
+        request: 'getReport-request-mapping-template.vtl'
+        response: 'common-response-mapping-template.vtl'
+      - dataSource: TaxCodes
+        type: Query
+        field: getTaxCodes
+        request: 'scanTaxCodes-request-mapping-template.vtl'
+        response: 'taxCodes-response-mapping-template.vtl'   
+      - dataSource: Reports
+        type: Mutation
+        field: updateReport
+        request: 'updateReport-request-mapping-template.vtl'
+        response: 'common-response-mapping-template.vtl'
+    dataSources:
+      - type: AMAZON_DYNAMODB
+        name: Clients
+        description: Clients table
+        config:
+          tableName: ${self:custom.db.clientstablename}
+          # serviceRoleArn: { Fn::GetAtt: [AppSyncDynamoDBServiceRole, Arn] }
+      - type: AMAZON_DYNAMODB
+        name: Reports
+        description: Reports table
+        config:
+          tableName: ${self:custom.db.reportstablename}
+          # serviceRoleArn: { Fn::GetAtt: [AppSyncDynamoDBServiceRole, Arn] }
+      - type: AMAZON_DYNAMODB
+        name: TaxCodes
+        description: Tax codes table
+        config:
+          tableName: ${self:custom.db.taxcodestablename}            
