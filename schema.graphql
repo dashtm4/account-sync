@@ -12,7 +12,7 @@ type Query {
 
 type Mutation {
     updateReport(
-        Accounts: AccountInput!
+        Accounts: AccountsInput!
     ): Report!
 }
 
@@ -42,16 +42,7 @@ type Report {
     ReportType: String!
     Software: String!
     Accounts: Accounts
-}
-
-input AccountInput {
-    Accounts: [Account!]
-    CreatedAt: String
-    EndPeriod: String
-    Id: String
-    ReportBasis: String
-    StartPeriod: String
-    Total: Total
+    DownloadUrl: String
 }
 
 type Account {
@@ -80,4 +71,27 @@ type Total{
 type User {
     Email: String!
     CognitoId: String!
+}
+
+input AccountsInput {
+    Accounts: [AccountIn!]
+    CreatedAt: String
+    EndPeriod: String
+    Id: String
+    ReportBasis: String
+    StartPeriod: String
+    TotalIn: TotalIn
+}
+
+input AccountIn {
+    AccountName: String
+    ValueCents: Float
+    Id: String
+    Type: String
+    AcctNumber: String
+}
+
+input TotalIn {
+    CreditCents: Float
+    DebitCents: Float
 }

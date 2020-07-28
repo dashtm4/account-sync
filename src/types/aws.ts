@@ -87,6 +87,11 @@ export interface DefaultResponse {
     message: string;
 }
 
+export interface DownloadLinkResponse {
+    message: string;
+    link: string;
+}
+
 export interface SuccessReportStoreResponse {
     message: string;
     id: string;
@@ -104,8 +109,8 @@ export interface ATokenEvent {
 export interface GetReportEvent {
     companySettings: {
         reportType: string;
-        taxSoftware: string;
-        endPeriod: Date;
+        software: string;
+        endDate: Date;
     };
     entityType: string;
 }

@@ -35,7 +35,7 @@ const rawHandler = async (
         const tokens = authResponse.getToken();
 
         const dbClient = await dynamoDb.scan({
-            TableName: process.env.clients!,
+            TableName: process.env.clientsTable!,
             FilterExpression: 'RealmId = :realmId and CognitoId = :cognitoId',
             ExpressionAttributeValues: {
                 ':realmId': tokens.realmId,

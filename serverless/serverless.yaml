@@ -78,10 +78,15 @@ provider:
             - '/'
             - - !Ref GraphQlApi
               - '*'
-        # - Fn::Join:
-        #     - '/'
-        #     - - !Ref GraphQlApi
-        #       - types/Query/fields/getReport           
+    - Effect: Allow 
+      Action:
+        - s3:*
+      Resource:
+        Fn::Join:
+          - ''
+          - - "arn:aws:s3:::"
+            - !Ref S3Bucket
+            - "/*"                                
 
   environment: 
     usersTable: ${self:custom.db.accsynctablename}
@@ -92,9 +97,19 @@ provider:
     environment: ${self:custom.env}
     redirectUri: ${self:custom.redirecturi}
     intuitAPI: ${self:custom.intuituri}
+    reportBucket: ${self:custom.reportBucketName}
+    bucketLink: ${self:custom.bucketLink}
   variableSyntax: "\\${((?!AWS|SecretName)[ ~:a-zA-Z0-9._@'\",\\-\\/\\(\\)\\*\\?]+?)}"
 
 functions:
+  UploadReportToS3:
+    handler: src/lambdas/uploadToS3.handler
+    events:
+      - http:
+          path: download/{id}
+          method: get
+          cors: true
+          # authorizer: ${self:custom.authorizer}
   SignUp:
    handler: src/lambdas/signUp.handler
    events:
@@ -149,6 +164,8 @@ custom:
   env: ${env:ENVIRONMENT}
   redirecturi: ${env:REDIRECT_URI}
   intuituri: ${env:INTUIT_API_URI}
+  reportBucketName: ${env:REPORT_BUCKET_NAME}
+  bucketLink: ${env:BUCKET_LINK}
   authorizer: 
     type: COGNITO_USER_POOLS
     authorizerId:

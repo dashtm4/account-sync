@@ -116,4 +116,10 @@ Resources:
         - AttributeName: "Id"
           KeyType: "HASH"
 
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: ${self:custom.reportBucketName}
+      AccessControl: Private
+
 

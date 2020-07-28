@@ -178,12 +178,12 @@ const storeReportSettings = async (
     clientId: string,
     {
         reportType,
-        taxSoftware,
-        endPeriod,
+        software,
+        endDate,
     }: {
         reportType: string;
-        taxSoftware: string;
-        endPeriod: Date;
+        software: string;
+        endDate: Date;
     }) => {
     const params = {
         TableName: process.env.reportsTable!,
@@ -191,8 +191,8 @@ const storeReportSettings = async (
             Id: uuid4(),
             ClientId: clientId,
             ReportType: reportType,
-            Software: taxSoftware,
-            EndDate: endPeriod,
+            Software: software,
+            EndDate: endDate,
             EntityType: entityType,
         },
     };
@@ -240,7 +240,7 @@ const rawHandler = async (
     } else throw Boom.badRequest('Client with this Id was not found');
 
     const processedReport = await getAndProcessReport(Items[0].RealmId,
-        companySettings.endPeriod, Items);
+        companySettings.endDate, Items);
 
     await storeProcessedReport(processedReport, reportId);
 
