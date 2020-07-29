@@ -2,9 +2,9 @@
     "version": "2017-02-28",
     "operation": "Scan",
     "filter": {
-        "expression": "RealmId = :realmId",
+        "expression": "CognitoId = :cognitoId",
         "expressionValues": {
-            ":realmId": $util.dynamodb.toDynamoDBJson($ctx.args.RealmId)
+            ":cognitoId": $util.dynamodb.toDynamoDBJson($ctx.args.CognitoId)
         },
     }
 }

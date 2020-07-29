@@ -1,4 +1,5 @@
 import axios from 'axios';
+import moment from 'moment';
 import AWS from 'aws-sdk';
 import Boom from '@hapi/boom';
 import OAuthClient from 'intuit-oauth';
@@ -192,7 +193,7 @@ const storeReportSettings = async (
             ClientId: clientId,
             ReportType: reportType,
             Software: software,
-            EndDate: endDate,
+            EndDate: moment(endDate).format('YYYY-MM-DD'),
             EntityType: entityType,
         },
     };
@@ -203,6 +204,36 @@ const storeReportSettings = async (
     } catch (e) {
         throw Boom.internal('Error during insert to db', e);
     }
+};
+
+const updateReportSettings = async (
+    id: string,
+    {
+        reportType,
+        software,
+        endDate,
+    }: {
+        reportType: string;
+        software: string;
+        endDate: Date;
+    }) => {
+    await dynamoDb.update({
+        TableName: process.env.reportsTable!,
+        Key: { Id: id },
+        UpdateExpression: 'set #d = :endDate, #s = :software, #r = :reportType',
+        ExpressionAttributeNames: {
+            '#d': 'EndDate',
+            '#s': 'Software',
+            '#r': 'ReportType',
+        },
+        ExpressionAttributeValues: {
+            ':endDate': endDate,
+            ':software': software,
+            ':reportType': reportType,
+        },
+    }).promise();
+
+    return id;
 };
 
 const storeProcessedReport = async (proccessedReport: InternalTrialBalanceReport, id: string) => {
@@ -221,6 +252,22 @@ const storeProcessedReport = async (proccessedReport: InternalTrialBalanceReport
     await dynamoDb.update(params).promise();
 };
 
+const checkAvailableSettings = async (clientId: string) => {
+    const { Items: reports } = await dynamoDb.scan({
+        TableName: process.env.reportsTable!,
+        FilterExpression: 'ClientId = :clientId',
+        ExpressionAttributeValues: {
+            ':clientId': clientId,
+        },
+    }).promise();
+
+    if (reports) {
+        return reports[0];
+    }
+
+    return undefined;
+};
+
 const rawHandler = async (
     event: APIGatewayEvent<GetReportEvent>,
 ): Promise<APIGatewayResponse<SuccessReportStoreResponse>> => {
@@ -236,7 +283,13 @@ const rawHandler = async (
     }).promise();
 
     if (Items) {
-        reportId = await storeReportSettings(entityType, Items[0].Id, companySettings);
+        const reportCheck = await checkAvailableSettings(Items[0].Id);
+
+        // reportId = await storeReportSettings(entityType, Items[0].Id, companySettings);
+
+        reportId = reportCheck
+            ? await updateReportSettings(reportCheck.Id, companySettings)
+            : await storeReportSettings(entityType, Items[0].Id, companySettings);
     } else throw Boom.badRequest('Client with this Id was not found');
 
     const processedReport = await getAndProcessReport(Items[0].RealmId,

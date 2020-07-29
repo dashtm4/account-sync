@@ -34,7 +34,7 @@ const rawHandler = async (
 
         const tokens = authResponse.getToken();
 
-        const dbClient = await dynamoDb.scan({
+        const { Items: dbClients } = await dynamoDb.scan({
             TableName: process.env.clientsTable!,
             FilterExpression: 'RealmId = :realmId and CognitoId = :cognitoId',
             ExpressionAttributeValues: {
@@ -43,7 +43,7 @@ const rawHandler = async (
             },
         }).promise();
 
-        if (dbClient) {
+        if (dbClients?.length) {
             throw Boom.notAcceptable('Client already added');
         }
 

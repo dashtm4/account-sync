@@ -13,14 +13,24 @@ const bucketName = process.env.reportBucket!;
 const rawHandler = async (
     event: APIGatewayEvent<null>,
 ): Promise<APIGatewayResponse<DownloadLinkResponse>> => {
+    const { sub: cognitoId } = event.requestContext.authorizer.claims;
+
     const reportId = event.pathParameters.id;
+
+    const { Items: users } = await dynamoDb.scan({
+        TableName: process.env.usersTable!,
+        FilterExpression: 'CognitoId = :cognitoId',
+        ExpressionAttributeValues: {
+            ':cognitoId': cognitoId,
+        },
+    }).promise();
 
     const { Item: report } = await dynamoDb.get({
         TableName: process.env.reportsTable!,
         Key: { Id: reportId },
     }).promise();
 
-    if (!report) {
+    if (!report || !users) {
         throw Boom.notAcceptable('Report with this Id was not found!');
     }
 
@@ -55,14 +65,28 @@ const rawHandler = async (
 
     const params = {
         Body: data.join('\n'),
-        Bucket: bucketName,
+        Bucket: `${bucketName}/${users[0].Email}-${client.CompanyName}`,
         Key: key,
         ACL: 'public-read',
     };
 
     await s3.putObject(params).promise();
 
-    return { message: 'Successfully uploaded report', link: encodeURI(`${process.env.bucketLink}/${key}`) };
+    const url = encodeURI(`${process.env.bucketLink}/${key}`);
+
+    await dynamoDb.update({
+        TableName: process.env.reportsTable!,
+        Key: { Id: report.Id },
+        UpdateExpression: 'set #url = :link',
+        ExpressionAttributeNames: {
+            '#url': 'DownloadUrl',
+        },
+        ExpressionAttributeValues: {
+            ':link': url,
+        },
+    }).promise();
+
+    return { message: 'Successfully uploaded report', link: url };
 };
 
 export const handler = middy(rawHandler)

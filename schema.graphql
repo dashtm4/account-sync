@@ -4,14 +4,15 @@ schema {
 }
 
 type Query {
-    getClient(RealmId: String!): Client!
+    getClients(CognitoId: String!): [Client]
+    getClient(Id: String!): Client
     getTaxCodes(EntityType: String!): [TaxCode]
     getReport(Id: String!): Report
-    getClientIncognitoId(RealmId: String!): String
 }
 
 type Mutation {
     updateReport(
+        Id: String,
         Accounts: AccountsInput!
     ): Report!
 }
@@ -80,7 +81,7 @@ input AccountsInput {
     Id: String
     ReportBasis: String
     StartPeriod: String
-    TotalIn: TotalIn
+    Total: TotalIn
 }
 
 input AccountIn {
@@ -89,6 +90,9 @@ input AccountIn {
     Id: String
     Type: String
     AcctNumber: String
+    TaxCode: String
+    TaxCodeDescription: String
+    Toggle: String
 }
 
 input TotalIn {

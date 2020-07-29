@@ -9,6 +9,7 @@
         "indent": "off",
         "@typescript-eslint/indent": ["error", 4],
         "no-underscore-dangle": ["error", { "allow": ["_id"] }],
-        "import/prefer-default-export": "off"
+        "import/prefer-default-export": "off",
+        "import/no-extraneous-dependencies": ["error", { "devDependencies": true }]
     }
 }

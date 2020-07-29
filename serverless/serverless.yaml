@@ -109,7 +109,7 @@ functions:
           path: download/{id}
           method: get
           cors: true
-          # authorizer: ${self:custom.authorizer}
+          authorizer: ${self:custom.authorizer}
   SignUp:
    handler: src/lambdas/signUp.handler
    events:
@@ -184,17 +184,17 @@ custom:
     mappingTemplates:
       - dataSource: Clients
         type: Query
-        field: getClient
+        field: getClients
         request: 'scanClient-request-mapping-template.vtl'
-        response: 'common-response-mapping-template.vtl'
-      - dataSource: Clients
-        type: Query
-        field: getClientIncognitoId
-        request: 'scanClient-request-mapping-template.vtl'
-        response: 'common-response-mapping-template.vtl'  
+        response: 'taxCodes-response-mapping-template.vtl'  
       - dataSource: Reports
         type: Query
         field: getReport
+        request: 'getReport-request-mapping-template.vtl'
+        response: 'common-response-mapping-template.vtl'
+      - dataSource: Clients
+        type: Query
+        field: getClient
         request: 'getReport-request-mapping-template.vtl'
         response: 'common-response-mapping-template.vtl'
       - dataSource: TaxCodes
