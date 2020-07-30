@@ -1,6 +1,12 @@
 /* eslint-disable no-await-in-loop */
 import AWS from 'aws-sdk';
 import OAuthClient from 'intuit-oauth';
+import middy from 'middy';
+import Boom from '@hapi/boom';
+import { jsonBodyParser } from 'middy/middlewares';
+import { apiGatewayResponse } from '../middlewares/apiGateWayResponse';
+import { APIGatewayEvent, ATokenEvent, DefaultResponse } from '../types/aws';
+import { APIGatewayResponse } from '../utils/aws';
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
@@ -10,48 +16,47 @@ const oauthClient = new OAuthClient({
     environment: process.env.environment,
 });
 
-export const handler = async (): Promise<void> => {
-    const tableName = process.env.clientsTable!;
+const rawHandler = async (
+    event: APIGatewayEvent<ATokenEvent>): Promise<APIGatewayResponse<DefaultResponse>> => {
+    const { sub: cognitoId } = event.requestContext.authorizer.claims;
+    const { responseUri } = event.body;
 
-    const { Items } = await dynamoDb.scan({
+    const { Items: clients } = await dynamoDb.scan({
         TableName: process.env.clientsTable!,
+        FilterExpression: 'CognitoId = :cognitoId',
+        ExpressionAttributeValues: {
+            ':cognitoid': cognitoId,
+        },
     }).promise();
 
-    if (!Items || !Items.length) {
+    if (!clients || !clients.length) {
         // eslint-disable-next-line no-console
         console.log('No clients in database yet');
-        return Promise.resolve();
+        throw Boom.expectationFailed('No such client in database');
     }
 
-    const itemsForUpdate = [];
+    const authResponse = await oauthClient.createToken(responseUri);
 
-    // eslint-disable-next-line no-restricted-syntax
-    for (const item of Items) {
-        const authResponse = await oauthClient.refreshUsingToken(item.Refresh_token);
+    const tokens = authResponse.getToken();
 
-        const tokens = authResponse.getToken();
+    await dynamoDb.update({
+        TableName: process.env.clientsTable!,
+        Key: { Id: clients[0].Id },
+        UpdateExpression: 'set #aT = :aToken, #rT = :rToken',
+        ExpressionAttributeNames: {
+            '#aT': 'AccessToken',
+            '#rT': 'RefreshToken',
+        },
+        ExpressionAttributeValues: {
+            ':aToken': tokens.access_token,
+            ':rToken': tokens.refresh_token,
+        },
+    }).promise();
 
-        itemsForUpdate.push({
-            PutRequest: {
-                Item: {
-                    HashKey: item.Id,
-                    CognitoId: item.CognitoId,
-                    Access_token: tokens.access_token,
-                    Refresh_token: item.Refresh_token,
-                },
-            },
-        });
-    }
-    try {
-        await dynamoDb.batchWrite({
-            RequestItems: {
-                [tableName]: [...itemsForUpdate],
-            },
-        }).promise;
-        return Promise.resolve();
-    } catch (e) {
-        // eslint-disable-next-line no-console
-        console.log('Error during batch insert');
-        return Promise.resolve();
-    }
+    return { message: 'Successfully updated tokens' };
 };
+
+export const handler = middy(rawHandler)
+    .use(jsonBodyParser())
+    .use(apiGatewayResponse<APIGatewayEvent<ATokenEvent>,
+    APIGatewayResponse<DefaultResponse>>());

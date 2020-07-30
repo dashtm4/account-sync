@@ -53,8 +53,6 @@ const getAccountsInfo = async (
 };
 
 const getReport = async (realmId: string, accessToken: string, endPeriod: Date) => {
-    // const startPeriod = moment(endPeriod, dateFormat).startOf('M').format(dateFormat);
-
     const trialBalanceReport = await instance.get<QBTrialBalanceReport>(`company/${realmId}/reports/TrialBalance`, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -146,7 +144,11 @@ const getAndProcessReport = async (realmId: string,
     }
 
     if (error) {
-        tokens = await getNewToken(Items[0].RefreshToken);
+        try {
+            tokens = await getNewToken(Items[0].RefreshToken);
+        } catch (e) {
+            throw Boom.expectationFailed('Refresh token expired');
+        }
 
         await dynamoDb.update({
             TableName: process.env.clientsTable!,
@@ -271,7 +273,6 @@ const checkAvailableSettings = async (clientId: string) => {
 const rawHandler = async (
     event: APIGatewayEvent<GetReportEvent>,
 ): Promise<APIGatewayResponse<SuccessReportStoreResponse>> => {
-    // const { sub: cognitoId } = event.requestContext.authorizer.claims;
     let reportId: string;
 
     const { companySettings, entityType } = event.body;

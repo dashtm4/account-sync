@@ -120,9 +120,13 @@ functions:
         authorizer: ${self:custom.authorizer}
 
   RefreshTokens:
-    handler: src/lambdas/refreshToken.handler
-    events:
-      - schedule: rate(1 hour)
+   handler: src/lambdas/refreshToken.handler
+   events:
+    - http:
+        path: refresh-token/
+        method: post
+        cors: true
+        authorizer: ${self:custom.authorizer}
    
   GetReportFromIntuit:
     handler: src/lambdas/storeReportToDb.handler
@@ -192,6 +196,11 @@ custom:
         field: getReport
         request: 'getReport-request-mapping-template.vtl'
         response: 'common-response-mapping-template.vtl'
+      - dataSource: Reports
+        type: Query
+        field: getReportByClientId
+        request: 'scanReport-request-mapping-template.vtl'
+        response: 'taxCodes-response-mapping-template.vtl'
       - dataSource: Clients
         type: Query
         field: getClient

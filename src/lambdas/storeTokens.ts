@@ -26,8 +26,6 @@ const rawHandler = async (
     event: APIGatewayEvent<ATokenEvent>): Promise<APIGatewayResponse<DefaultResponse>> => {
     const { responseUri } = event.body;
 
-    // console.log(event.body);
-
     const { sub: cognitoId } = event.requestContext.authorizer.claims;
     try {
         const authResponse = await oauthClient.createToken(responseUri);

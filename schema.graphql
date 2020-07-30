@@ -8,6 +8,7 @@ type Query {
     getClient(Id: String!): Client
     getTaxCodes(EntityType: String!): [TaxCode]
     getReport(Id: String!): Report
+    getReportByClientId(ClientId: String!): [Report]
 }
 
 type Mutation {

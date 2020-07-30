@@ -4,6 +4,7 @@ import Boom from '@hapi/boom';
 import { APIGatewayEvent, DownloadLinkResponse } from '../types/aws';
 import { apiGatewayResponse } from '../middlewares/apiGateWayResponse';
 import { APIGatewayResponse } from '../utils/aws';
+import { processReport } from '../utils/processReport';
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 const s3 = new AWS.S3();
@@ -52,16 +53,9 @@ const rawHandler = async (
 
     const data = [`${reportYear}, ${entityType}`, '*', 'A,1,'];
 
-    // eslint-disable-next-line no-restricted-syntax
-    for (const account of report.Accounts.Accounts) {
-        const taxCode = account.TaxCode ? account.TaxCode : '';
-        const acctNum = account.AcctNum ? account.AcctNum : '';
-        const value = account.ValueCents ? Math.round(account.ValueCents) : '';
-        const name = account.AccountName ? account.AccountName : '';
-        data.push(`${taxCode}\t${acctNum}\t${value}\t${name}`);
-    }
+    data.push(...processReport(report));
 
-    const key = `${client.CompanyName}-${reportYear}-Ultratax.DWI`;
+    const key = `${client.CompanyName}-${reportYear}-${report.Software}.DWI`;
 
     const params = {
         Body: data.join('\n'),
@@ -72,7 +66,7 @@ const rawHandler = async (
 
     await s3.putObject(params).promise();
 
-    const url = encodeURI(`${process.env.bucketLink}/${key}`);
+    const url = encodeURI(`${process.env.bucketLink}/${users[0].Email}-${client.CompanyName}/${key}`);
 
     await dynamoDb.update({
         TableName: process.env.reportsTable!,
