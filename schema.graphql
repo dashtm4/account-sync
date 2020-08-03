@@ -17,6 +17,10 @@ type Mutation {
         Id: String,
         AccountInfo: AccountIn!
     ): Account
+    updateReport(
+        Id: String!,
+        DownloadUrl: String
+    ): Report
 }
 
 type Client {

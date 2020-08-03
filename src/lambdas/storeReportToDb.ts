@@ -223,16 +223,18 @@ const updateReportSettings = async (
     await dynamoDb.update({
         TableName: process.env.reportsTable!,
         Key: { Id: id },
-        UpdateExpression: 'set #d = :endDate, #s = :software, #r = :reportType',
+        UpdateExpression: 'set #d = :endDate, #s = :software, #r = :reportType, #u = :downloadUrl',
         ExpressionAttributeNames: {
             '#d': 'EndDate',
             '#s': 'Software',
             '#r': 'ReportType',
+            '#u': 'DownloadUrl',
         },
         ExpressionAttributeValues: {
             ':endDate': endDate,
             ':software': software,
             ':reportType': reportType,
+            ':downloadUrl': '',
         },
     }).promise();
 

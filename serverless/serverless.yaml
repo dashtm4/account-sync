@@ -195,21 +195,17 @@ custom:
   appSync:
     name: ${self:service.name}
     authenticationType: API_KEY
-    # userPoolConfig:
-    #    awsRegion: ${self:custom.region}
-    #    userPoolId: !Ref CognitoUserPool
-    #    defaultAction: "ALLOW"
     mappingTemplates:
       - dataSource: Clients
         type: Query
         field: getClients
         request: 'scanClient-request-mapping-template.vtl'
-        response: 'taxCodes-response-mapping-template.vtl'
+        response: 'array-response-mapping-template.vtl'
       - dataSource: Accounts
         type: Query
         field: getAccountsByReportId
         request: 'scanAccount-request-mapping-template.vtl'
-        response: 'taxCodes-response-mapping-template.vtl'    
+        response: 'array-response-mapping-template.vtl'    
       - dataSource: Reports
         type: Query
         field: getReport
@@ -219,7 +215,7 @@ custom:
         type: Query
         field: getReportByClientId
         request: 'scanReport-request-mapping-template.vtl'
-        response: 'taxCodes-response-mapping-template.vtl'
+        response: 'array-response-mapping-template.vtl'
       - dataSource: Clients
         type: Query
         field: getClient
@@ -229,11 +225,16 @@ custom:
         type: Query
         field: getTaxCodes
         request: 'scanTaxCodes-request-mapping-template.vtl'
-        response: 'taxCodes-response-mapping-template.vtl'   
+        response: 'array-response-mapping-template.vtl'   
       - dataSource: Accounts
         type: Mutation
         field: updateAccount
         request: 'updateAccount-request-mapping-template.vtl'
+        response: 'common-response-mapping-template.vtl'
+      - dataSource: Reports
+        type: Mutation
+        field: updateReport
+        request: 'updateReport-request-mapping-template.vtl'
         response: 'common-response-mapping-template.vtl'
     dataSources:
       - type: AMAZON_DYNAMODB
@@ -241,13 +242,11 @@ custom:
         description: Clients table
         config:
           tableName: ${self:custom.db.clientstablename}
-          # serviceRoleArn: { Fn::GetAtt: [AppSyncDynamoDBServiceRole, Arn] }
       - type: AMAZON_DYNAMODB
         name: Reports
         description: Reports table
         config:
           tableName: ${self:custom.db.reportstablename}
-          # serviceRoleArn: { Fn::GetAtt: [AppSyncDynamoDBServiceRole, Arn] }
       - type: AMAZON_DYNAMODB
         name: TaxCodes
         description: Tax codes table
