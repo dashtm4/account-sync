@@ -1,0 +1,10 @@
+{
+    "version": "2017-02-28",
+    "operation": "Scan",
+    "filter": {
+        "expression": "ReportId = :reportId",
+        "expressionValues": {
+            ":reportId": $util.dynamodb.toDynamoDBJson($ctx.args.ReportId)
+        },
+    }
+}

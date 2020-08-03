@@ -59,6 +59,18 @@ provider:
             - !Ref AWS::AccountId
             - table/${self:custom.db.reportstablename}
     - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource:
+        Fn::Join:
+          - ':'
+          - - arn
+            - aws
+            - dynamodb
+            - ${self:custom.region}
+            - !Ref AWS::AccountId
+            - table/${self:custom.db.accountstablename}           
+    - Effect: Allow
       Action: 
         - dynamodb:* 
       Resource: 
@@ -92,6 +104,7 @@ provider:
     usersTable: ${self:custom.db.accsynctablename}
     clientsTable: ${self:custom.db.clientstablename}
     reportsTable: ${self:custom.db.reportstablename}
+    accountsTable: ${self:custom.db.accountstablename}
     clientSecret: ${self:custom.clientsecret}
     clientId: ${self:custom.clientid}
     environment: ${self:custom.env}
@@ -163,6 +176,7 @@ custom:
     clientstablename: clients_table
     reportstablename: reports_table
     taxcodestablename: taxcodes_table
+    accountstablename: accounts_table
   clientsecret: ${env:CLIENT_SECRET}
   clientid: ${env:CLIENT_ID}
   env: ${env:ENVIRONMENT}
@@ -190,7 +204,12 @@ custom:
         type: Query
         field: getClients
         request: 'scanClient-request-mapping-template.vtl'
-        response: 'taxCodes-response-mapping-template.vtl'  
+        response: 'taxCodes-response-mapping-template.vtl'
+      - dataSource: Accounts
+        type: Query
+        field: getAccountsByReportId
+        request: 'scanAccount-request-mapping-template.vtl'
+        response: 'taxCodes-response-mapping-template.vtl'    
       - dataSource: Reports
         type: Query
         field: getReport
@@ -211,10 +230,10 @@ custom:
         field: getTaxCodes
         request: 'scanTaxCodes-request-mapping-template.vtl'
         response: 'taxCodes-response-mapping-template.vtl'   
-      - dataSource: Reports
+      - dataSource: Accounts
         type: Mutation
-        field: updateReport
-        request: 'updateReport-request-mapping-template.vtl'
+        field: updateAccount
+        request: 'updateAccount-request-mapping-template.vtl'
         response: 'common-response-mapping-template.vtl'
     dataSources:
       - type: AMAZON_DYNAMODB
@@ -233,4 +252,9 @@ custom:
         name: TaxCodes
         description: Tax codes table
         config:
-          tableName: ${self:custom.db.taxcodestablename}            
+          tableName: ${self:custom.db.taxcodestablename}
+      - type: AMAZON_DYNAMODB
+        name: Accounts
+        description: Accounts table
+        config:
+          tableName: ${self:custom.db.accountstablename}                

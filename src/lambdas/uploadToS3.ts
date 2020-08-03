@@ -15,7 +15,6 @@ const rawHandler = async (
     event: APIGatewayEvent<null>,
 ): Promise<APIGatewayResponse<DownloadLinkResponse>> => {
     const { sub: cognitoId } = event.requestContext.authorizer.claims;
-
     const reportId = event.pathParameters.id;
 
     const { Items: users } = await dynamoDb.scan({
@@ -48,12 +47,20 @@ const rawHandler = async (
         throw Boom.notAcceptable('Client connected to report was not found');
     }
 
+    const { Items: accounts } = await dynamoDb.scan({
+        TableName: process.env.accountsTable!,
+        FilterExpression: 'ReportId = :reportId',
+        ExpressionAttributeValues: {
+            ':reportId': report.Id,
+        },
+    }).promise();
+
     const reportYear = report.EndDate.slice(2, 4);
     const entityType = report.EntityType;
 
-    const data = [`${reportYear}, ${entityType}`, '*', 'A,1,'];
+    const data = [`${entityType}, ${reportYear}`, `${client.CompanyName}`, '*', 'A,1,'];
 
-    data.push(...processReport(report));
+    data.push(...processReport(accounts!, report.Software));
 
     const key = `${client.CompanyName}-${reportYear}-${report.Software}.DWI`;
 

@@ -13,6 +13,7 @@ import {
 } from '../types/reports';
 import { APIGatewayResponse } from '../utils/aws';
 import { apiGatewayResponse } from '../middlewares/apiGateWayResponse';
+import { compareAccounts } from '../utils/compareAccounts';
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
@@ -242,16 +243,85 @@ const storeProcessedReport = async (proccessedReport: InternalTrialBalanceReport
     const params = {
         TableName: process.env.reportsTable!,
         Key: { Id: id },
-        UpdateExpression: 'set #a = :accs',
+        UpdateExpression: 'set #sPeriod = :startPeriod, #ePeriod = :endPeriod, #cAt = :createdAt, #rBase = :repBasis, #t = :total',
         ExpressionAttributeNames: {
-            '#a': 'Accounts',
+            '#sPeriod': 'StartPeriod',
+            '#ePeriod': 'EndPeriod',
+            '#cAt': 'CreatedAt',
+            '#rBase': 'ReportBasis',
+            '#t': 'Total',
         },
         ExpressionAttributeValues: {
-            ':accs': proccessedReport,
+            ':startPeriod': proccessedReport.StartPeriod,
+            ':endPeriod': proccessedReport.EndPeriod,
+            ':createdAt': proccessedReport.CreatedAt,
+            ':repBasis': proccessedReport.ReportBasis,
+            ':total': proccessedReport.Total,
         },
     };
 
     await dynamoDb.update(params).promise();
+};
+
+const getDeprecatedAccounts = async (reportId: string) => {
+    const { Items: accountsToUpdate } = await dynamoDb.scan({
+        TableName: process.env.accountsTable!,
+        FilterExpression: 'ReportId = :reportId',
+        ExpressionAttributeValues: {
+            ':reportId': reportId,
+        },
+    }).promise();
+
+    return accountsToUpdate;
+};
+
+const updateAccounts = async (updatedAccounts: AWS.DynamoDB.DocumentClient.ItemList) => {
+    const updateItems = [];
+
+    if (updatedAccounts.length) {
+        // eslint-disable-next-line no-restricted-syntax
+        for (const account of updatedAccounts) {
+            const item = {
+                PutRequest: {
+                    Item: {
+                        ...account,
+                    },
+                },
+            };
+            updateItems.push(item);
+        }
+        await dynamoDb.batchWrite({
+            RequestItems: {
+                [process.env.accountsTable!]: [...updateItems],
+            },
+        }).promise();
+    }
+};
+
+const storeAccounts = async (accounts: Account[], reportId: string) => {
+    const items = [];
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const account of accounts) {
+        const item = {
+            PutRequest: {
+                // eslint-disable-next-line prefer-object-spread
+                Item: Object.assign({}, account, {
+                    Id: uuid4(),
+                    ReportId: reportId,
+                }),
+            },
+        };
+        items.push(item);
+    }
+
+    const params = {
+        RequestItems: {
+            [process.env.accountsTable!]: [...items],
+        },
+    };
+
+    await dynamoDb.batchWrite(params).promise();
 };
 
 const checkAvailableSettings = async (clientId: string) => {
@@ -277,16 +347,19 @@ const rawHandler = async (
 
     const { companySettings, entityType } = event.body;
 
+    const { sub: cognitoId } = event.requestContext.authorizer.claims;
+
     const { Items } = await dynamoDb.scan({
         TableName: process.env.clientsTable!,
-        FilterExpression: 'RealmId = :realmId',
-        ExpressionAttributeValues: { ':realmId': event.pathParameters.realmId },
+        FilterExpression: 'RealmId = :realmId and CognitoId = :cognitoId',
+        ExpressionAttributeValues: {
+            ':realmId': event.pathParameters.realmId,
+            ':cognitoId': cognitoId,
+        },
     }).promise();
 
     if (Items) {
         const reportCheck = await checkAvailableSettings(Items[0].Id);
-
-        // reportId = await storeReportSettings(entityType, Items[0].Id, companySettings);
 
         reportId = reportCheck
             ? await updateReportSettings(reportCheck.Id, companySettings)
@@ -297,6 +370,26 @@ const rawHandler = async (
         companySettings.endDate, Items);
 
     await storeProcessedReport(processedReport, reportId);
+
+    const accounts = processedReport.Accounts;
+
+    const accountsToUpdate = await getDeprecatedAccounts(reportId);
+
+    if (accountsToUpdate?.length) {
+        const updatedAccounts = compareAccounts(accountsToUpdate, accounts);
+
+        while (updatedAccounts?.length) {
+            // eslint-disable-next-line no-await-in-loop
+            await updateAccounts(updatedAccounts.splice(0, 25));
+        }
+
+        return { message: 'Report successfully stored in db', id: reportId };
+    }
+
+    while (accounts.length) {
+        // eslint-disable-next-line no-await-in-loop
+        await storeAccounts(accounts.splice(0, 25), reportId);
+    }
 
     return { message: 'Report successfully stored in db', id: reportId };
 };

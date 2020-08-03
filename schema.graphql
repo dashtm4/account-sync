@@ -9,13 +9,14 @@ type Query {
     getTaxCodes(EntityType: String!): [TaxCode]
     getReport(Id: String!): Report
     getReportByClientId(ClientId: String!): [Report]
+    getAccountsByReportId(ReportId: String!): [Account]
 }
 
 type Mutation {
-    updateReport(
+    updateAccount(
         Id: String,
-        Accounts: AccountsInput!
-    ): Report!
+        AccountInfo: AccountIn!
+    ): Account
 }
 
 type Client {
@@ -43,16 +44,24 @@ type Report {
     EndDate: String!
     ReportType: String!
     Software: String!
-    Accounts: Accounts
+    CreatedAt: String
+    EndPeriod: String
+    ReportBasis: String
+    StartPeriod: String
+    Total: Total
     DownloadUrl: String
 }
 
 type Account {
+    ReportId: String
     AccountName: String
     ValueCents: Float
     Id: String
     Type: String
     AcctNumber: String
+    TaxCode: String
+    TaxCodeDescription: String
+    Toggle: String
 }
 
 type Accounts {
