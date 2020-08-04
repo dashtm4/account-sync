@@ -231,7 +231,7 @@ const updateReportSettings = async (
             '#u': 'DownloadUrl',
         },
         ExpressionAttributeValues: {
-            ':endDate': endDate,
+            ':endDate': moment(endDate).format('YYYY-MM-DD'),
             ':software': software,
             ':reportType': reportType,
             ':downloadUrl': '',
