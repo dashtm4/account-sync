@@ -43,6 +43,7 @@
     "webpack-node-externals": "^2.5.0"
   },
   "devDependencies": {
+    "serverless-offline": "^6.5.0",
     "aws-sdk": "^2.713.0",
     "@types/uuid": "^8.0.0",
     "@types/aws-lambda": "^8.10.59",

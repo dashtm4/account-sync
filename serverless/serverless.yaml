@@ -11,6 +11,7 @@ plugins:
   - serverless-appsync-plugin
   - serverless-webpack
   - serverless-iam-roles-per-function
+  - serverless-offline
  
 resources: ${file(serverless/resources.yaml)}
 
