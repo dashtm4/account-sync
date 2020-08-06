@@ -2,18 +2,14 @@ import AWS from 'aws-sdk';
 import middy from 'middy';
 import { jsonBodyParser } from 'middy/middlewares';
 import Boom from '@hapi/boom';
-import { APIGatewayEvent } from '../types/aws';
+import { APIGatewayEvent, DefaultResponse } from '../types/aws';
 import { APIGatewayResponse } from '../utils/aws';
 import { apiGatewayResponse } from '../middlewares/apiGateWayResponse';
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
-interface SignUpResponse {
-    message: string;
-}
-
 const rawHandler = async (event: APIGatewayEvent<null>)
-: Promise<APIGatewayResponse<SignUpResponse>> => {
+: Promise<APIGatewayResponse<DefaultResponse>> => {
     // eslint-disable-next-line no-console
     console.log(event);
 
@@ -21,7 +17,7 @@ const rawHandler = async (event: APIGatewayEvent<null>)
 
     try {
         const { Item } = await dynamoDb.get({
-            TableName: process.env.tableName!,
+            TableName: process.env.usersTable!,
             Key: { Email: cognito.email },
         }).promise();
         if (Item) {
@@ -32,7 +28,7 @@ const rawHandler = async (event: APIGatewayEvent<null>)
     }
 
     const params = {
-        TableName: process.env.tableName!,
+        TableName: process.env.usersTable!,
         Item: {
             Email: cognito.email,
             CognitoId: cognito.sub,
@@ -49,4 +45,4 @@ const rawHandler = async (event: APIGatewayEvent<null>)
 
 export const handler = middy(rawHandler)
     .use(jsonBodyParser())
-    .use(apiGatewayResponse<APIGatewayEvent<null>, APIGatewayResponse<SignUpResponse>>());
+    .use(apiGatewayResponse<APIGatewayEvent<null>, APIGatewayResponse<DefaultResponse>>());

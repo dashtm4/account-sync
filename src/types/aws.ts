@@ -83,13 +83,36 @@ export interface CognitoTokenPayload {
     groups: string;
 }
 
+export interface DefaultResponse {
+    message: string;
+}
+
+export interface DownloadLinkResponse {
+    message: string;
+    link: string;
+}
+
+export interface SuccessReportStoreResponse {
+    message: string;
+    id: string;
+}
+
 export interface SignUpEvent {
     email: string,
     cognitoId: string
 }
 
 export interface ATokenEvent {
-    code: string;
+    responseUri: string;
+}
+
+export interface GetReportEvent {
+    companySettings: {
+        reportType: string;
+        software: string;
+        endDate: Date;
+    };
+    entityType: string;
 }
 
 export interface DefaultEvent {

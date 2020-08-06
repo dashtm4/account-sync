@@ -1,0 +1,115 @@
+schema {
+    query: Query
+    mutation: Mutation
+}
+
+type Query {
+    getClients(CognitoId: String!): [Client]
+    getClient(Id: String!): Client
+    getTaxCodes(EntityType: String!): [TaxCode]
+    getReport(Id: String!): Report
+    getReportByClientId(ClientId: String!): [Report]
+    getAccountsByReportId(ReportId: String!): [Account]
+}
+
+type Mutation {
+    updateAccount(
+        Id: String,
+        AccountInfo: AccountIn!
+    ): Account
+    updateReport(
+        Id: String!,
+        DownloadUrl: String
+    ): Report
+}
+
+type Client {
+    Id: String!
+    AccessToken: String!
+    RefreshToken: String!
+    CognitoId: String!
+    RealmId: String!
+    CompanyName: String
+}
+
+type TaxCode {
+    Id: String!
+    EntityType: String!
+    FormLine: String!
+    TaxCode: String!
+    TaxCodeDescription: String!
+    Toggle: String!
+}
+
+type Report {
+    Id: String!
+    ClientId: String!
+    EntityType: String!
+    EndDate: String!
+    ReportType: String!
+    Software: String!
+    CreatedAt: String
+    EndPeriod: String
+    ReportBasis: String
+    StartPeriod: String
+    Total: Total
+    DownloadUrl: String
+}
+
+type Account {
+    ReportId: String
+    AccountName: String
+    ValueCents: Float
+    Id: String
+    Type: String
+    AcctNumber: String
+    TaxCode: String
+    TaxCodeDescription: String
+    Toggle: String
+}
+
+type Accounts {
+    Accounts: [Account!]
+    CreatedAt: String
+    EndPeriod: String
+    Id: String
+    ReportBasis: String
+    StartPeriod: String
+    Total: Total
+}
+
+type Total{
+     CreditCents: Float
+     DebitCents: Float
+}
+
+type User {
+    Email: String!
+    CognitoId: String!
+}
+
+input AccountsInput {
+    Accounts: [AccountIn!]
+    CreatedAt: String
+    EndPeriod: String
+    Id: String
+    ReportBasis: String
+    StartPeriod: String
+    Total: TotalIn
+}
+
+input AccountIn {
+    AccountName: String
+    ValueCents: Float
+    Id: String
+    Type: String
+    AcctNumber: String
+    TaxCode: String
+    TaxCodeDescription: String
+    Toggle: String
+}
+
+input TotalIn {
+    CreditCents: Float
+    DebitCents: Float
+}
