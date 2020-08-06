@@ -1,3 +1,6 @@
+org: scottefein
+app: accountant-sync
+
 service:
   name: account-sync
 
