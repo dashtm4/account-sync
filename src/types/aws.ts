@@ -87,6 +87,11 @@ export interface DefaultResponse {
     message: string;
 }
 
+export interface ClientResponse {
+    message: string;
+    clientId?: string;
+}
+
 export interface DownloadLinkResponse {
     message: string;
     link: string;

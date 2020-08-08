@@ -1,0 +1,216 @@
+10/28/04
+Tax Code	Description	Form/Line#	Toggle
+100	Gross receipts	"1120S, L1a"	Y
+101	Return and allowances	"1120S, L1b"	N
+102	Other income	"1120S, L5"	Y
+103	State tax refunds	"1120S, L5"	Y
+104	Capital gain distribution	"Sch D, L10"	Y
+105	Capital gain distribution 28%	"Sch D, L10"	Y
+140	Gross income sourced at SH	"Sch K, L15c"	Y
+141	Gross income from all sources	"Sch K, L15b"	Y
+142	Passive foreign source income	"Sch K, L15d1"	Y
+143	Listed categories	"Sch K, 15d2"	Y
+144	General limitation foreign income	"Sch K, 15d3"	Y
+150	Non-US interest income	"Sch K, L4a"	Y
+151	US interest income	"Sch K, L4a"	Y
+152	Dividend income	"Sch K, L4b"	Y
+153	Other portfolio income	"Sch K, L4f"	Y
+154	Other income	"Sch K, L6"	Y
+156	Rental RE credits	"Sch K, L12d"	N
+157	Other rental credits	"Sch K, L12e"	N
+158	Other credits	"Sch K, L13"	N
+200	Compensation of officers	"1120S, L7"	N
+201	Salaries and wages	"1120S, L8"	N
+202	Repairs	"1120S, L9"	N
+203	Bad debts	"1120S, L10"	N
+204	Rents	"1120S, L11"	N
+205	Taxes	"1120S, L12"	N
+206	Interest	"1120S, L13"	N
+207	Book depreciation	"1120S, L14a"	N
+208	Page 1 depletion - book	"1120S, L15"	N
+209	Advertising	"1120S, L16"	N
+210	"Pension, profit sharing"	"1120S, L17"	N
+211	Employee benefit programs	"1120S, L18"	N
+212	Other deductions	"1120S, L19"	N
+213	Meals and entertainment	"1120S, L19"	N
+214	Total book amortization	"1120S, L19"	N
+215	Meals (DOT)	"1120S, L19"	N
+225	Charitable contributions @ 50%	"Sch K, L7"	N
+226	Charitable contributions @ 30%	"Sch K, L7"	N
+227	Charitable contributions @ 20%	"Sch K, L7"	N
+228	Book Section 179 amount	"Sch M, var"	N
+229	Portfolio income deductions	"Sch K, L9"	N
+230	Other deductions	"Sch K, L10"	N
+231	Interest expense on investment	"Sch K, L11a"	N
+232	Qualified rehab expenditures	"Sch K, L12c"	N
+233	Total foreign taxes	"Sch K, L15g"	N
+234	Section 59(e) expenditures	"Sch K, L16b"	N
+235	Total property distributions	"Sch K, L20"	N
+240	Shrhldr level int exp deduction	"Sch K, L15e1"	N
+241	Shrhldr level other exp deduction	"Sch K, L15e2"	N
+242	Passive frgn source deduction	"Sch K, L15f1"	N
+243	Listed categories deduction	"Sch K, L15f2"	N
+244	Gnrl limitation frgn src ded	"Sch K, L15f3"	N
+275	Purchases	"Sch A, L2"	N
+276	Cost of labor	"Sch A, L3"	N
+277	Additional section 263A costs	"Sch A, L4"	N
+278	Other costs	"Sch A, L5"	N
+279	Amortization	"Sch A, L5"	N
+280	Inventory at end of year	"Sch A, L7"	N
+300	Estimated tax payments	"1120S, L23a"	N
+301	Amount deposited with 7004	"1120S, L23b"	N
+400	Cash	"1120, L1"	N
+401	Accounts receivable	"1120, L2a"	N
+402	Less allowance for bad debts	"1120, L2b"	Y
+403	Inventories	"1120, L3"	N
+404	US government obligations	"1120, L4"	N
+405	Tax exempt securities	"1120, L5"	N
+406	Other current assets	"1120, L6"	N
+407	Prepaid federal income tax	"1120, L6"	N
+408	Prepaid state tax	"1120, L6"	N
+409	Loans to shareholders	"1120, L7"	N
+415	Mortgage and real estate loans	"1120, L8"	N
+416	Other investments	"1120, L9"	N
+425	"Buildings, other deprec assets"	"1120, L10a"	N
+426	Less accumulated depreciation	"1120, L10b"	Y
+427	Depletable assets	"1120, L11a"	N
+428	Less accumulated depletion	"1120, L11b"	Y
+429	Land (net of any amortization)	"1120, L12"	N
+430	Intangible assets	"1120, L13a"	N
+431	Less accumulated amortization	"1120, L13b"	Y
+432	Other assets	"1120, L14"	N
+440	Accounts payable	"1120, L16"	Y
+441	"Mortg, notes, bonds pay < 1 yr"	"1120, L17"	Y
+442	Other current liabilities	"1120, L18"	Y
+443	Federal income tax payable	"1120, L18"	Y
+444	State tax payable	"1120, L18"	Y
+445	Loans from shareholders	"1120, L19"	Y
+450	"Mortg, notes, bonds pay=> 1 yr"	"1120, L20"	Y
+451	Other liabilities	"1120, L21"	Y
+465	Capital stock - common	"1120, L22"	Y
+466	Paid in or capital surplus	"1120, L23"	Y
+467	Retained earnings - unappr	"1120, L24"	Y
+468	Accumulated Adjustments Acct	"1120, L24"	Y
+469	Other Adjustments Account	"1120, L24"	Y
+470	Previously Taxed Income	"1120, L24"	Y
+471	Adjustments to S/Hs' equity	"1120, L25"	Y
+472	Less cost of treasury stock	"1120, L26"	N
+481	Sch K income not on books	"Sch M1, L2"	N
+482	"Expenses on books, not Sch K"	"Sch M1, L3"	N
+483	Exps related to tax exempt inc	"Sch M1, L3"	N
+484	Officer life ins premiums	"Sch M1, L3"	N
+485	"Income on books, not on Sch K"	"Sch M1, L5"	Y
+486	Tax exempt interest	"Sch M1, L5"	Y
+487	Cash surrender - officer life	"Sch M1, L5"	Y
+488	4797 gain/loss - book	"Sch M1, var"	Y
+489	Deductions on K not on books	"Sch M1, L6"	Y
+490	AAA-Other additions	"Sch M2, L3a"	Y
+491	OAA-Other additions	"Sch M2, L3b"	Y
+492	AAA-Other reductions	"Sch M2, L5a"	N
+493	OAA-Other reductions	"Sch M2, L5b"	N
+494	AAA-Nondividend distributions	"Sch M2, L7a"	N
+495	OAA-Nondividend distributions	"Sch M2, L7b"	N
+496	UTI-Nondividend distributions	"Sch M2, L7c"	N
+497	Nondividend distributions	"R/E Wrk, var"	N
+498	Dividend distributions	"R/E Wrk, var"	N
+499	Oil & gas depletion - book	"Sch M1, L3"	N
+502	Gross rental income	"Rent, var"	Y
+503	Advertising	"Rent, var"	N
+504	Auto and travel	"Rent, var"	N
+505	Cleaning and maintenance	"Rent, var"	N
+506	Commissions	"Rent, var"	N
+507	Insurance	"Rent, var"	N
+508	Legal and other prof fees	"Rent, var"	N
+509	Interest	"Rent, var"	N
+510	Repairs	"Rent, var"	N
+511	Taxes	"Rent, var"	N
+512	Utilities	"Rent, var"	N
+513	Wages and salaries	"Rent, var"	N
+514	Depreciation	"Rent, var"	N
+515	Other expenses	"Rent, var"	N
+582	Gross royalties	"Rent, var"	Y
+585	Meals and entertainment	"Rent, var"	N
+586	Meals (DOT)	"Rent, var"	N
+587	Amortization	"Rent, var"	N
+590	Other income	"Rent, var"	Y
+601	Sales of items bought	"Sch F, L1"	Y
+602	Cost/basis of items bought	"Sch F, L2"	N
+604	Sales of items you raised	"Sch F, L4"	Y
+605	Total cooperative distribution	"Sch F, var"	Y
+606	Agricultural program payments	"Sch F, var"	Y
+607	CCC loans reported	"Sch F, var"	Y
+608	Crop ins proceeds	"Sch F, var"	Y
+609	Custom hire income	"Sch F, var"	Y
+610	Other income	"Sch F, var"	Y
+612	Car and truck expenses	"Sch F, L12"	N
+613	Chemicals	"Sch F, L13"	N
+614	Conservation expenses	"Sch F, L14"	N
+615	Custom hire	"Sch F, L15"	N
+616	Depreciation	"Sch F, L16"	N
+617	Employee benefits programs	"Sch F, L17"	N
+618	Feed purchased	"Sch F, L18"	N
+619	Fertilizers and lime	"Sch F, L19"	N
+620	Freight and trucking	"Sch F, L20"	N
+621	Gasoline	"Sch F, L21"	N
+622	Insurance	"Sch F, L22"	N
+623	Interest - financial inst	"Sch F, L23a"	N
+624	Labor hired	"Sch F, L24"	N
+625	Pension and profit sharing	"Sch F, L25"	N
+626	Rent - machinery	"Sch F, L26a"	N
+627	Repairs and maintenance	"Sch F, L27"	N
+628	Seeds and plants	"Sch F, L28"	N
+629	Storage and warehousing	"Sch F, L29"	N
+630	Supplies purchased	"Sch F, L30"	N
+631	Taxes	"Sch F, L31"	N
+632	Utilities	"Sch F, L32"	N
+633	Veterinary fees	"Sch F, L33"	N
+634	Other expenses	"Sch F, L34"	N
+638	Sales of items - accrual	"Sch F, L38"	Y
+646	Inventory - beg of year	"Sch F, L46"	N
+647	Cost of items for resale	"Sch F, L47"	N
+649	Inventory - end of year	"Sch F, L49"	N
+683	Interest expense - other	"Sch F, L23b"	N
+684	Meals and entertainment	"Sch F, L34"	N
+685	Preproductive expenses	"Sch F, L34"	Y
+686	Rental expense - other	"Sch F, L26b"	N
+687	CCC loans forfeited	"Sch F, var"	Y
+688	Crop insurance deferred	"Sch F, L8d"	Y
+689	Meals (DOT)	"Sch F, L34"	N
+690	Amortization	"Sch F, L34"	N
+701	Income from production	"4835, L1"	Y
+702	Distr rec from cooperatives	"4835, L2a"	Y
+703	Agricultural program payments	"4835, L3a"	Y
+704	CCC loans reported under elec	"4835, L4a"	Y
+705	Crop ins proceeds - current yr	"4835, L5a"	Y
+706	Other income	"4835, L6"	Y
+708	Car/truck expense	"4835, L8"	N
+709	Chemicals	"4835, L9"	N
+710	Conservation	"4835, L10"	N
+711	Custom hire	"4835, L11"	N
+712	Depreciation	"4835, L12"	N
+713	Employee benefits	"4835, L13"	N
+714	Feed purchased	"4835, L14"	N
+715	Fertilizers and lime	"4835, L15"	N
+716	Freight and trucking	"4835, L16"	N
+717	Gasoline	"4835, L17"	N
+718	Insurance	"4835, L18"	N
+719	Interest - financial	"4835, L19a"	N
+720	Labor hired	"4835, L20"	N
+721	Pension & profit sharing	"4835, L21"	N
+722	Rent - machinery	"4835, L22a"	N
+723	Repairs	"4835, L23"	N
+724	Seeds	"4835, L24"	N
+725	Storage	"4835, L25"	N
+726	Supplies	"4835, L26"	N
+727	Taxes	"4835, L27"	N
+728	Utilities	"4835, L28"	N
+729	Veterinary	"4835, L29"	N
+730	Other expenses	"4835, L30"	N
+780	Meals and entertainment	"4835, L30"	N
+781	Preproductive expenses	"4835, L30"	Y
+782	Rent expense - other	"4835, L22b"	N
+784	CCC loans forf/repaid w/ cert	"4835, L4b"	Y
+785	Crop ins amt def from prior yr	"4835, L5d"	Y
+786	Meals (DOT)	"4835, L30"	N
+787	Amortization	"4835, L30"	N
+789	Interest expense - other	"4835, L19b"	N

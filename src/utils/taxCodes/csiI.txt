@@ -1,0 +1,127 @@
+10/28/04
+Tax Code	Description	Form/Line#	Toggle
+503	Rental income	"Sch E, L3"	Y
+504	Royalty income	"Sch E, L4"	Y
+505	Advertising	"Sch E, L5"	N
+506	Auto and travel	"Sch E, L6"	N
+507	Cleaning and maintenance	"Sch E, L7"	N
+508	Commissions	"Sch E, L8"	N
+509	Insurance	"Sch E, L9"	N
+510	Legal and other prof fees	"Sch E, L10"	N
+511	Management fees	"Sch E, L11"	N
+512	Mortgage interest	"Sch E, L12"	N
+513	Other interest	"Sch E, L13"	N
+514	Repairs	"Sch E, L14"	N
+515	Supplies	"Sch E, L15"	N
+516	Taxes	"Sch E, L16"	N
+517	Utilities	"Sch E, L17"	N
+518	Other expenses	"Sch E, L18"	N
+519	Refinancing points (balance)	"Sch E, L12"	N
+520	Depreciation	"Sch E, L20"	N
+580	Depletion	"Sch E, L20"	N
+601	Sales of items bought	"Sch F, L1"	Y
+602	Cost/basis of items bought	"Sch F, L2"	N
+604	Sales of items raised	"Sch F, L4"	Y
+605	Total cooperative distribution	"Sch F, var"	Y
+606	Agricultural program payments	"Sch F, var"	Y
+607	CCC loans reported	"Sch F, var"	Y
+608	Crop insurance proceeds	"Sch F, var"	Y
+609	Custom hire income	"Sch F, var"	Y
+610	Other income	"Sch F, var"	Y
+612	Car and truck expenses	"Sch F, L12"	N
+613	Chemicals	"Sch F, L13"	N
+614	Conservation expenses	"Sch F, L14"	N
+615	Custom hire work	"Sch F, L15"	N
+616	Depreciation	"Sch F, L16"	N
+617	Employee benefit programs	"Sch F, L17"	N
+618	Feed purchased	"Sch F, L18"	N
+619	Fertilizers	"Sch F, L19"	N
+620	Freight and trucking	"Sch F, L20"	N
+621	"Gasoline, fuel and oil"	"Sch F, L21"	N
+622	Insurance	"Sch F, L22"	N
+623	Interest - financial inst	"Sch F, L23a"	N
+624	Labor hired	"Sch F, L24"	N
+625	Pension and profit sharing	"Sch F, L25"	N
+626	Vehicles rented	"Sch F, L26a"	N
+627	Repairs and maintenance	"Sch F, L27"	N
+628	Seeds and plants	"Sch F, L28"	N
+629	Storage and warehousing	"Sch F, L29"	N
+630	Supplies purchased	"Sch F, L30"	N
+631	Taxes	"Sch F, L31"	N
+632	Utilities	"Sch F, L32"	N
+633	Veterinary fees	"Sch F, L33"	N
+634	Other expenses	"Sch F, L34a"	N
+638	Sales of items - accrual	"Sch F, L38"	Y
+647	Cost of items for resale	"Sch F, L47"	N
+649	Inventory at end of year	"Sch F, L49"	N
+683	Other interest expense	"Sch F, L23b"	N
+685	Preproductive expenses	"Sch F, L34f"	Y
+686	Other rental expense	"Sch F, L26b"	N
+687	CCC loans forfeited	"Sch F, var"	Y
+688	Crop insurance amount deferred	"Sch F, L8d"	Y
+701	Income from production	"4835, L1"	Y
+702	Distributions from cooperative	"4835, L2a"	Y
+703	Agricultural program payments	"4835, L3a"	Y
+704	CCC loans reported under elec	"4835, L4a"	Y
+705	Crop insurance proceeds - CY	"4835, L5a"	Y
+706	Other income	"4835, L6"	Y
+708	Car and truck expenses	"4835, L8"	N
+709	Chemicals	"4835, L9"	N
+710	Conservation	"4835, L10"	N
+711	Custom hire	"4835, L11"	N
+712	Depreciation	"4835, L12"	N
+713	Employee benefits	"4835, L13"	N
+714	Feed purchased	"4835, L14"	N
+715	Fertilizer	"4835, L15"	N
+716	Freight	"4835, L16"	N
+717	Gasoline	"4835, L17"	N
+718	Insurance	"4835, L18"	N
+719	Interest - financial inst	"4835, L19a"	N
+720	Labor hired	"4835, L20"	N
+721	Pension and profit sharing	"4835, L21"	N
+722	Rent - machinery	"4835, L22a"	N
+723	Repairs	"4835, L23"	N
+724	Seeds	"4835, L24"	N
+725	Storage	"4835, L25"	N
+726	Supplies	"4835, L26"	N
+727	Taxes	"4835, L27"	N
+728	Utilities	"4835, L28"	N
+729	Veterinary	"4835, L29"	N
+730	Other expenses	"4835, L30a"	N
+781	Preproductive expenses	"4835, L30g"	Y
+782	Rent expense - other	"4835, L22b"	N
+784	CCC loans forf/repaid w/cert	"4835, L4b"	Y
+785	Crop ins amt deferred from PY	"4835, L5d"	Y
+789	Interest expense - other	"4835, L19b"	N
+801	Gross receipts	"Sch C, L1"	Y
+802	Returns and allowances	"Sch C, L2"	N
+806	Other income	"Sch C, L6"	Y
+808	Advertising	"Sch C, L8"	N
+809	Bad debts	"Sch C, L27"	N
+810	Car and truck expenses	"Sch C, L9"	N
+811	Commissions	"Sch C, L10"	N
+812	Depletion	"Sch C, L12"	N
+813	Depreciation	"Sch C, L13"	N
+814	Employee benefit programs	"Sch C, L14"	N
+815	Insurance	"Sch C, L15"	N
+816	Interest - mortgage	"Sch C, L16a"	N
+817	Legal and professional fees	"Sch C, L17"	N
+818	Office expenses	"Sch C, L18"	N
+819	Pension and profit sharing	"Sch C, L19"	N
+820	Rent - machinery	"Sch C, L20a"	N
+821	Repairs and maintenance	"Sch C, L21"	N
+822	Supplies	"Sch C, L22"	N
+823	Taxes and licenses	"Sch C, L23"	N
+824	Travel	"Sch C, L24a"	N
+825	Utilities	"Sch C, L25"	N
+826	Wages	"Sch C, L26"	N
+827	Other expenses	"Sch C, L27"	N
+828	Contract labor	"Sch C, L11"	N
+834	Purchases	"Sch C, L36"	N
+835	Cost of labor	"Sch C, L37"	N
+836	Materials	"Sch C, L38"	N
+837	Other costs	"Sch C, L39"	N
+839	Ending inventory	"Sch C, L41"	N
+880	Rental - other	"Sch C, L20b"	N
+884	Meals/entertainment sub to lim	"Sch C, L24b"	N
+886	Interest - other	"Sch C, L16b"	N

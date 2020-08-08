@@ -5,7 +5,7 @@ import Boom from '@hapi/boom';
 import { v4 as uuidv4 } from 'uuid';
 import { jsonBodyParser } from 'middy/middlewares';
 import OAuthClient from 'intuit-oauth';
-import { APIGatewayEvent, ATokenEvent, DefaultResponse } from '../types/aws';
+import { APIGatewayEvent, ATokenEvent, ClientResponse } from '../types/aws';
 import { APIGatewayResponse } from '../utils/aws';
 import { apiGatewayResponse } from '../middlewares/apiGateWayResponse';
 
@@ -23,7 +23,7 @@ const oauthClient = new OAuthClient({
 });
 
 const rawHandler = async (
-    event: APIGatewayEvent<ATokenEvent>): Promise<APIGatewayResponse<DefaultResponse>> => {
+    event: APIGatewayEvent<ATokenEvent>): Promise<APIGatewayResponse<ClientResponse>> => {
     const { responseUri } = event.body;
 
     const { sub: cognitoId } = event.requestContext.authorizer.claims;
@@ -42,7 +42,10 @@ const rawHandler = async (
         }).promise();
 
         if (dbClients?.length) {
-            throw Boom.notAcceptable('Client already added');
+            return {
+                message: 'Client already added',
+                clientId: dbClients[0].Id!,
+            };
         }
 
         const { data } = await instance.get(`company/${tokens.realmId}/query?query=select*from CompanyInfo`, {
@@ -75,4 +78,4 @@ const rawHandler = async (
 export const handler = middy(rawHandler)
     .use(jsonBodyParser())
     .use(apiGatewayResponse<APIGatewayEvent<ATokenEvent>,
-    APIGatewayResponse<DefaultResponse>>());
+    APIGatewayResponse<ClientResponse>>());
