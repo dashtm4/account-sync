@@ -23,7 +23,7 @@ provider:
   runtime: nodejs10.x
   stage: ${self:custom.stage}
   region: ${self:custom.region}
-  memorySize: 512
+  memorySize: 128 
   timeout: 30
   iamRoleStatements:
     - Effect: Allow
@@ -174,13 +174,13 @@ functions:
 
 custom: 
   stage: ${opt:stage, env:STAGE}
-  region: ${opt:region, 'ap-southeast-2'}
+  region: ${opt:region, 'us-east-1'}
   db: 
-    accsynctablename: users_table
-    clientstablename: clients_table
-    reportstablename: reports_table
-    taxcodestablename: taxcodes_table
-    accountstablename: accounts_table
+    accsynctablename: ${opt:stage, env:STAGE}_users_table
+    clientstablename: ${opt:stage, env:STAGE}_clients_table
+    reportstablename: ${opt:stage, env:STAGE}_reports_table
+    taxcodestablename: ${opt:stage, env:STAGE}_taxcodes_table
+    accountstablename: ${opt:stage, env:STAGE}_accounts_table
   clientsecret: ${env:CLIENT_SECRET}
   clientid: ${env:CLIENT_ID}
   env: ${env:ENVIRONMENT}
