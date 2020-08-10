@@ -1,8 +1,5 @@
-org: scottefein
-app: accountant-sync
-
 service:
-  name: account-sync
+  name: accountant-sync
 
 package:
   individually: false
