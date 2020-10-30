@@ -180,6 +180,8 @@ const getAndProcessReport = async (realmId: string,
 const storeReportSettings = async (
     entityType: string,
     clientId: string,
+    companyName: string,
+    cognitoId: string,
     {
         reportType,
         software,
@@ -193,6 +195,8 @@ const storeReportSettings = async (
         TableName: process.env.reportsTable!,
         Item: {
             Id: uuid4(),
+            CompanyName: companyName,
+            CognitoId: cognitoId,
             ClientId: clientId,
             ReportType: reportType,
             Software: software,
@@ -342,6 +346,18 @@ const checkAvailableSettings = async (clientId: string) => {
     return undefined;
 };
 
+const getCompanyName = async(clientId: string) =>{
+    const { Item } = await dynamoDb.get({
+        TableName: process.env.clientsTable!,
+        Key: { Id: clientId },
+    }).promise();
+    if (Item) {
+        return(Item.CompanyName);
+    }else{
+        return undefined;
+    }
+}
+
 const rawHandler = async (
     event: APIGatewayEvent<GetReportEvent>,
 ): Promise<APIGatewayResponse<SuccessReportStoreResponse>> => {
@@ -362,10 +378,10 @@ const rawHandler = async (
 
     if (Items) {
         const reportCheck = await checkAvailableSettings(Items[0].Id);
-
+        const companyName = await getCompanyName(Items[0].Id);
         reportId = reportCheck
             ? await updateReportSettings(reportCheck.Id, companySettings)
-            : await storeReportSettings(entityType, Items[0].Id, companySettings);
+            : await storeReportSettings(entityType, Items[0].Id, cognitoId, companyName, companySettings);
     } else throw Boom.badRequest('Client with this Id was not found');
 
     const processedReport = await getAndProcessReport(Items[0].RealmId,

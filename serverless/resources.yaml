@@ -103,6 +103,12 @@ Resources:
               KeyType: "HASH"
           Projection:
             ProjectionType: ALL
+        - IndexName: "CognitoId-index"
+          KeySchema:
+            - AttributeName: "CognitoId"
+              KeyType: "HASH"
+          Projection:
+            ProjectionType: ALL
 
   AccountsTable:
     Type: AWS::DynamoDB::Table

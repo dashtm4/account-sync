@@ -9,6 +9,7 @@ type Query {
     getTaxCodes(EntityType: String!): [TaxCode]
     getReport(Id: String!): Report
     getReportByClientId(ClientId: String!): [Report]
+    getReportsByCognitoId(CognitoId: String!): [Report]
     getAccountsByReportId(ReportId: String!): [Account]
 }
 
@@ -44,6 +45,8 @@ type TaxCode {
 type Report {
     Id: String!
     ClientId: String!
+    CognitoId: String!
+    CompanyName: String!
     EntityType: String!
     EndDate: String!
     ReportType: String!

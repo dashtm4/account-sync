@@ -1,0 +1,12 @@
+{
+    "version" : "2017-02-28",
+    "operation" : "Query",
+    "index" : "CognitoId-index",
+    "query" : {
+        ## Provide a query expression. **
+        "expression": "CognitoId = :cognito_id",
+        "expressionValues" : {
+            ":cognito_id" : $util.dynamodb.toDynamoDBJson($ctx.args.CognitoId)
+        }
+    }
+}

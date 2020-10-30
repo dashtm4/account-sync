@@ -217,6 +217,11 @@ custom:
         field: getReportByClientId
         request: 'scanReport-request-mapping-template.vtl'
         response: 'array-response-mapping-template.vtl'
+      - dataSource: Reports
+        type: Query
+        field: getReportsByCognitoId
+        request: 'scanReport-cognitoid-request-mapping-template.vtl'
+        reponse: 'array-response-mapping-template.vtl'
       - dataSource: Clients
         type: Query
         field: getClient
