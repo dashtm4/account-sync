@@ -381,7 +381,7 @@ const rawHandler = async (
         const companyName = await getCompanyName(Items[0].Id);
         reportId = reportCheck
             ? await updateReportSettings(reportCheck.Id, companySettings)
-            : await storeReportSettings(entityType, Items[0].Id, cognitoId, companyName, companySettings);
+            : await storeReportSettings(entityType, Items[0].Id, companyName, cognitoId, companySettings);
     } else throw Boom.badRequest('Client with this Id was not found');
 
     const processedReport = await getAndProcessReport(Items[0].RealmId,
