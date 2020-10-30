@@ -11,9 +11,9 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient();
 const rawHandler = async (event: APIGatewayEvent<null>)
 : Promise<APIGatewayResponse<DefaultResponse>> => {
     // eslint-disable-next-line no-console
-    console.log(event);
 
     const cognito = event.requestContext.authorizer.claims;
+    console.log(cognito);
 
     try {
         const { Item } = await dynamoDb.get({
