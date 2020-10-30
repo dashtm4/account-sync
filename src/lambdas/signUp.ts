@@ -32,6 +32,10 @@ const rawHandler = async (event: APIGatewayEvent<null>)
         Item: {
             Email: cognito.email,
             CognitoId: cognito.sub,
+            Name: cognito.name,
+            OfficeName: cognito["custom:OfficeName"],
+            OfficeAddress: cognito["custom:OfficeAddress"],
+            OfficePhoneNumber: cognito["custom:OfficePhoneNumber"],
         },
     };
     try {
