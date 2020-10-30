@@ -18,12 +18,15 @@ const processUltraTax = (accounts: AWS.DynamoDB.DocumentClient.ItemList) => {
     const data = [];
 
     // eslint-disable-next-line no-restricted-syntax
+    
     for (const account of accounts) {
-        const taxCode = account.TaxCode ? account.TaxCode : '';
-        const acctNum = account.AcctNum ? account.AcctNum : '';
-        const value = account.ValueCents ? flipSign(account.Toggle, account.ValueCents) : '';
-        const name = account.AccountName;
-        data.push(`${taxCode.withIndent()}${acctNum.withIndent()}${value.toString().withIndent()}${name}`);
+        if (account.TaxCode){
+            const taxCode = account.TaxCode;
+            const acctNum = account.AcctNum ? account.AcctNum : '';
+            const value = account.ValueCents ? flipSign(account.Toggle, account.ValueCents) : '';
+            const name = account.AccountName;
+            data.push(`${taxCode.withIndent()}${acctNum.withIndent()}${value.toString().withIndent()}${name}`);
+        }
     }
 
     return data;
