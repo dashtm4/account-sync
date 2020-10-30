@@ -27,7 +27,7 @@ const processUltraTax = (accounts: AWS.DynamoDB.DocumentClient.ItemList) => {
             longest = account.valueCents.length;
         }
     }
-    longest = longest + 1;
+    longest = longest + 10;
 
     for (const account of accounts) {
         if (account.TaxCode){
