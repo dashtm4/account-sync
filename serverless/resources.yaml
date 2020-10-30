@@ -141,9 +141,22 @@ Resources:
       AttributeDefinitions:
         - AttributeName: "Id"
           AttributeType: "S"
+        - AttributeName: "EntityType"
+          AttributeType: "S"
+        - AttributeName: "TaxCode"
+          AttributeType: "S"
       KeySchema:
         - AttributeName: "Id"
           KeyType: "HASH"
+      GlobalSecondaryIndexes:
+        - IndexName: "EntityType-TaxCode-index"
+          KeySchema:
+            - AttributeName: "EntityType"
+              KeyType: "HASH"
+            - AttributeName: "TaxCode"
+              KeyType: "RANGE"
+          Projection:
+            ProjectionType: ALL  
 
   S3Bucket:
     Type: AWS::S3::Bucket
