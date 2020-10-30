@@ -93,6 +93,8 @@ Resources:
           AttributeType: "S"
         - AttributeName: "ClientId"
           AttributeType: "S"
+        - AttributeName: "CognitoId"
+          AttributeType: "S"
       KeySchema:
         - AttributeName: "Id"
           KeyType: "HASH"
