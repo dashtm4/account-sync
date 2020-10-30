@@ -56,7 +56,7 @@ const rawHandler = async (
     }).promise();
 
     const reportYear = report.EndDate.slice(2, 4);
-    const entityType = report.EntityType;
+    const entityType = report.EntityType.match(/\((.*)\)/).pop();
 
     const data = [`${entityType}, ${reportYear}`, `${client.CompanyName}`, '*', 'A,1,'];
 
