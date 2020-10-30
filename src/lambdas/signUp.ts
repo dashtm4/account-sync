@@ -10,10 +10,7 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
 const rawHandler = async (event: APIGatewayEvent<null>)
 : Promise<APIGatewayResponse<DefaultResponse>> => {
-    // eslint-disable-next-line no-console
-
     const cognito = event.requestContext.authorizer.claims;
-    console.log(cognito);
 
     try {
         const { Item } = await dynamoDb.get({
@@ -33,9 +30,9 @@ const rawHandler = async (event: APIGatewayEvent<null>)
             Email: cognito.email,
             CognitoId: cognito.sub,
             Name: cognito.name,
-            OfficeName: cognito["custom:OfficeName"],
-            OfficeAddress: cognito["custom:OfficeAddress"],
-            OfficePhoneNumber: cognito["custom:OfficePhoneNumber"],
+            OfficeName: cognito["custom:officeName"],
+            OfficeAddress: cognito["custom:officeAddress"],
+            OfficePhoneNumber: cognito["custom:officePhoneNumber"],
         },
     };
     try {
