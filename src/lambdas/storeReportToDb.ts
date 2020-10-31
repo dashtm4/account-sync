@@ -143,7 +143,7 @@ const addAcctInfo = (
             console.log('In AddAcctLoop');
             if (account.Id === accInfo.Id) {
                 // eslint-disable-next-line no-param-reassign
-                account.AcctNumber = accInfo.AcctNumber;
+                account.AcctNum = accInfo.AcctNum;
                 account.Description = accInfo.Description;
                 console.log(account);
             }

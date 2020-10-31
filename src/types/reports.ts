@@ -57,7 +57,7 @@ export interface Account {
     Id: string;
     Type: string;
     Description?: string;
-    AcctNumber?: string;
+    AcctNum?: string;
     TaxCode?: string;
     TaxCodeDescription?: string;
     Toggle?: string;
@@ -86,7 +86,7 @@ export interface AccountData {
         CreateTime: string;
         LastUpdatedTime: string;
     };
-    AcctNumber?: string;
+    AcctNum?: string;
 }
 
 export interface AccountInfoResponse {
