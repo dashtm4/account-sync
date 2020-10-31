@@ -209,10 +209,12 @@ const storeReportSettings = async (
         reportType,
         software,
         endDate,
+        accountingMethod,
     }: {
         reportType: string;
         software: string;
         endDate: Date;
+        accountingMethod: string;
     }) => {
     const params = {
         TableName: process.env.reportsTable!,
@@ -223,6 +225,7 @@ const storeReportSettings = async (
             ClientId: clientId,
             ReportType: reportType,
             Software: software,
+            AccountingMethod: accountingMethod,
             EndDate: moment(endDate).format('YYYY-MM-DD'),
             EntityType: entityType,
         },
@@ -242,25 +245,29 @@ const updateReportSettings = async (
         reportType,
         software,
         endDate,
+        accountingMethod,
     }: {
         reportType: string;
         software: string;
         endDate: Date;
+        accountingMethod: string;
     }) => {
     await dynamoDb.update({
         TableName: process.env.reportsTable!,
         Key: { Id: id },
-        UpdateExpression: 'set #d = :endDate, #s = :software, #r = :reportType, #u = :downloadUrl',
+        UpdateExpression: 'set #d = :endDate, #s = :software, #r = :reportType, #u = :downloadUrl, #aM = :accountingMethod',
         ExpressionAttributeNames: {
             '#d': 'EndDate',
             '#s': 'Software',
             '#r': 'ReportType',
             '#u': 'DownloadUrl',
+            '#aM': 'AccountingMethod',
         },
         ExpressionAttributeValues: {
             ':endDate': moment(endDate).format('YYYY-MM-DD'),
             ':software': software,
             ':reportType': reportType,
+            ':accountingMethod': accountingMethod,
             ':downloadUrl': '',
         },
     }).promise();
