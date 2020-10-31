@@ -199,11 +199,14 @@ const getAndProcessReport = async (realmId: string,
 
     const ids = processedReport.Accounts.map((account) => account.Id);
 
-    var accountsInfo = [];
     if(ids.length > 0){
-        accountsInfo = await getAccountsInfo(realmId, tokens[0], ids);
+        console.log("Sending up IDs to getAccountsInfo");
+        console.log(ids)
+        const accountsInfo = await getAccountsInfo(realmId, tokens[0], ids);
+        return addAcctInfo(accountsInfo, processedReport);
+    }else{
+        return processedReport
     }
-    return addAcctInfo(accountsInfo, processedReport);
 };
 
 const storeReportSettings = async (
