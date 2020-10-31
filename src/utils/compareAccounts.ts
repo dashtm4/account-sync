@@ -11,6 +11,8 @@ export const compareAccounts = (
                 newAccount.TaxCode = account.TaxCode;
                 newAccount.TaxCodeDescription = account.TaxCodeDescription;
                 newAccount.Toggle = account.Toggle;
+                newAccount.AcctNumber = account.AcctNumber;
+                newAccount.Description = account.Description;
             }
         });
     });
