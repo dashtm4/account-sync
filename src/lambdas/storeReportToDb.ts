@@ -311,9 +311,17 @@ const updateAccounts = async (updatedAccounts: AWS.DynamoDB.DocumentClient.ItemL
     if (updatedAccounts.length) {
         // eslint-disable-next-line no-restricted-syntax
         for (const account of updatedAccounts) {
+            console.log("Updating Account....");
+            console.log(account);
+            var acctId
+            if (account.Id){
+                acctId = account.Id;
+            }else{
+                acctId = uuid4();
+            }
             await dynamoDb.update({
                 TableName: process.env.accountsTable!,
-                Key: {'Id': uuid4()},
+                Key: {'Id': acctId},
                 AttributeUpdates: account,
             }).promise();
         }
