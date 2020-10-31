@@ -200,7 +200,7 @@ const getAndProcessReport = async (realmId: string,
     const ids = processedReport.Accounts.map((account) => account.Id);
 
     var accountsInfo = [];
-    if(ids.length > ){
+    if(ids.length > 0){
         accountsInfo = await getAccountsInfo(realmId, tokens[0], ids);
     }
     return addAcctInfo(accountsInfo, processedReport);
