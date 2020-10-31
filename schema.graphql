@@ -50,6 +50,7 @@ type Report {
     EntityType: String!
     EndDate: String!
     ReportType: String!
+    AccountingMethod: String!
     Software: String!
     CreatedAt: String
     EndPeriod: String
