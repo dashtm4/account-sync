@@ -311,21 +311,12 @@ const updateAccounts = async (updatedAccounts: AWS.DynamoDB.DocumentClient.ItemL
     if (updatedAccounts.length) {
         // eslint-disable-next-line no-restricted-syntax
         for (const account of updatedAccounts) {
-            const item = {
-                PutRequest: {
-                    Item: {
-                        ...account,
-                    },
-                },
-            };
-            updateItems.push(item);
+            await dynamoDb.update({
+                TableName: process.env.accountsTable!,
+                Key: {'Id': uuid4()},
+                AttributeUpdates: account,
+            }).promise();
         }
-        console.log(updateItems);
-        await dynamoDb.batchWrite({
-            RequestItems: {
-                [process.env.accountsTable!]: [...updateItems],
-            },
-        }).promise();
     }
 };
 
