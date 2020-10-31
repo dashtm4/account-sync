@@ -53,7 +53,10 @@ const getAccountsInfo = async (
     return accountInfo.data;
 };
 
-const getReport = async (realmId: string, accessToken: string, endPeriod: Date) => {
+const getReport = async (realmId: string, accessToken: string, endPeriod: Date, accountingMethod: string) => {
+    if (!accountingMethod){
+        accountingMethod = "Accrual";
+    }
     const trialBalanceReport = await instance.get<QBTrialBalanceReport>(`company/${realmId}/reports/TrialBalance`, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -62,6 +65,7 @@ const getReport = async (realmId: string, accessToken: string, endPeriod: Date) 
         params: {
             end_date: moment(endPeriod).format('YYYY-MM-DD'),
             start_date: moment(endPeriod).subtract(1, 'years').format('YYYY-MM-DD'),
+            accounting_method: accountingMethod,
         },
     });
 
@@ -151,14 +155,14 @@ const addAcctInfo = (
 };
 
 const getAndProcessReport = async (realmId: string,
-    endPeriod: Date, Items: AWS.DynamoDB.DocumentClient.ItemList) => {
+    endPeriod: Date, accountingMethod: string, Items: AWS.DynamoDB.DocumentClient.ItemList) => {
     let report: QBTrialBalanceReport;
     let error: boolean = false;
 
     let tokens = [Items[0].AccessToken, Items[0].RefreshToken];
 
     try {
-        report = await getReport(realmId, tokens[0], endPeriod);
+        report = await getReport(realmId, tokens[0], endPeriod, accountingMethod);
     } catch (e) {
         if (e.response && e.response.status === 401) {
             // eslint-disable-next-line no-console
@@ -438,7 +442,7 @@ const rawHandler = async (
     } else throw Boom.badRequest('Client with this Id was not found');
 
     const processedReport = await getAndProcessReport(Items[0].RealmId,
-        companySettings.endDate, Items);
+        companySettings.endDate, companySettings.accountingMethod, Items);
 
     await storeProcessedReport(processedReport, reportId);
 
