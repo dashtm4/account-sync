@@ -61,7 +61,7 @@ const getReport = async (realmId: string, accessToken: string, endPeriod: Date) 
         },
         params: {
             end_date: moment(endPeriod).format('YYYY-MM-DD'),
-            start_date: moment(endPeriod).subtract(1, 'years'),
+            start_date: moment(endPeriod).subtract(1, 'years').format('YYYY-MM-DD'),
         },
     });
 
