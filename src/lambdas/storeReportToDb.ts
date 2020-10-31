@@ -140,12 +140,10 @@ const addAcctInfo = (
 ) => {
     processedReport.Accounts.forEach((account) => {
         accountInfo.QueryResponse.Account.forEach((accInfo) => {
-            console.log('In AddAcctLoop');
             if (account.Id === accInfo.Id) {
                 // eslint-disable-next-line no-param-reassign
                 account.AcctNum = accInfo.AcctNum;
                 account.Description = accInfo.Description;
-                console.log(account);
             }
         });
     });
@@ -308,13 +306,10 @@ const getDeprecatedAccounts = async (reportId: string) => {
 
 const updateAccounts = async (updatedAccounts: AWS.DynamoDB.DocumentClient.ItemList) => {
     const updateItems = [];
-    console.log("UpdateAccounts");
 
     if (updatedAccounts.length) {
         // eslint-disable-next-line no-restricted-syntax
         for (const account of updatedAccounts) {
-            console.log("Updating Account....");
-            console.log(account);
             var acctId
             if (account.Id){
                 acctId = account.Id;
@@ -332,7 +327,6 @@ const updateAccounts = async (updatedAccounts: AWS.DynamoDB.DocumentClient.ItemL
 
 const deleteAccounts = async (deleteAccounts: Account[]) => {
     const updateItems = [];
-    console.log("DeleteAccounts")
     if (deleteAccounts.length) {
         // eslint-disable-next-line no-restricted-syntax
         for (const account of deleteAccounts) {
@@ -348,7 +342,6 @@ const deleteAccounts = async (deleteAccounts: Account[]) => {
             };
             updateItems.push(item);
         }
-        console.log(updateItems);
         await dynamoDb.batchWrite({
             RequestItems: {
                 [process.env.accountsTable!]: [...updateItems],
