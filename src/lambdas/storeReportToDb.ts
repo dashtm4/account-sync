@@ -140,10 +140,12 @@ const addAcctInfo = (
 ) => {
     processedReport.Accounts.forEach((account) => {
         accountInfo.QueryResponse.Account.forEach((accInfo) => {
-            if (account.Id === accInfo.Id && accInfo.AcctNumber) {
+            console.log('In AddAcctLoop');
+            if (account.Id === accInfo.Id) {
                 // eslint-disable-next-line no-param-reassign
                 account.AcctNumber = accInfo.AcctNumber;
                 account.Description = accInfo.Description;
+                console.log(account);
             }
         });
     });
