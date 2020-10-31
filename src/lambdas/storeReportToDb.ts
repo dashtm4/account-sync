@@ -316,10 +316,9 @@ const updateAccounts = async (updatedAccounts: AWS.DynamoDB.DocumentClient.ItemL
             }else{
                 acctId = uuid4();
             }
-            await dynamoDb.update({
+            await dynamoDb.put({
                 TableName: process.env.accountsTable!,
-                Key: {'Id': acctId},
-                AttributeUpdates: account,
+                Item: account,
             }).promise();
         }
     }
