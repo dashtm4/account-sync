@@ -56,6 +56,7 @@ export interface Account {
     ValueCents: number;
     Id: string;
     Type: string;
+    Description?: string;
     AcctNumber?: string;
     TaxCode?: string;
     TaxCodeDescription?: string;
@@ -69,6 +70,7 @@ export interface AccountData {
     Active: boolean;
     Classification: string;
     AccountType: string;
+    Description: string;
     AccountSubType: string;
     CurrentBalance: number;
     CurrentBalanceWithSubAccounts: number;

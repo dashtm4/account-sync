@@ -60,7 +60,7 @@ const getReport = async (realmId: string, accessToken: string, endPeriod: Date) 
             Accept: 'application/json',
         },
         params: {
-            end_date: endPeriod,
+            end_date: moment(endPeriod).format('YYYY-MM-DD'),
         },
     });
 
@@ -133,7 +133,7 @@ const processReport = (trialBalanceReport: QBTrialBalanceReport): InternalTrialB
     return processedReport;
 };
 
-const addAcctNumber = (
+const addAcctInfo = (
     accountInfo: AccountInfoResponse,
     processedReport: InternalTrialBalanceReport,
 ) => {
@@ -142,6 +142,7 @@ const addAcctNumber = (
             if (account.Id === accInfo.Id && accInfo.AcctNumber) {
                 // eslint-disable-next-line no-param-reassign
                 account.AcctNumber = accInfo.AcctNumber;
+                account.Description = accInfo.Description
             }
         });
     });
@@ -195,7 +196,7 @@ const getAndProcessReport = async (realmId: string,
 
     const accountsInfo = await getAccountsInfo(realmId, tokens[0], ids);
 
-    return addAcctNumber(accountsInfo, processedReport);
+    return addAcctInfo(accountsInfo, processedReport);
 };
 
 const storeReportSettings = async (
