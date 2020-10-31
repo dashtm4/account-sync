@@ -193,7 +193,7 @@ const getAndProcessReport = async (realmId: string,
         }).promise();
     }
 
-    report = await getReport(realmId, tokens[0], endPeriod);
+    report = await getReport(realmId, tokens[0], endPeriod, accountingMethod);
 
     const processedReport = processReport(report);
 
