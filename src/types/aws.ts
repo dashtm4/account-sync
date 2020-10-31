@@ -116,6 +116,7 @@ export interface GetReportEvent {
         reportType: string;
         software: string;
         endDate: Date;
+        accountingMethod: string;
     };
     entityType: string;
 }
