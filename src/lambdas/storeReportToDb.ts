@@ -67,6 +67,27 @@ const getReport = async (realmId: string, accessToken: string, endPeriod: Date) 
     return trialBalanceReport.data;
 };
 
+export const getDeleteAccounts = (
+    dbAccounts: AWS.DynamoDB.DocumentClient.ItemList,
+    newAccounts: Account[],
+) => {
+    const deleteAccounts = Array<Account>();
+    dbAccounts.forEach((account) => {
+        var found = false;
+        newAccounts.forEach((newAccount) => {
+            if (account.AccountName === newAccount.AccountName) {
+                // eslint-disable-next-line no-param-reassign
+                found = true;
+            }
+        });
+        if (found == false){
+            deleteAccounts.push(account.Id);
+        }
+    });
+
+    return deleteAccounts;
+};
+
 const processReport = (trialBalanceReport: QBTrialBalanceReport): InternalTrialBalanceReport => {
     const accounts: Account[] = [];
 
@@ -304,6 +325,33 @@ const updateAccounts = async (updatedAccounts: AWS.DynamoDB.DocumentClient.ItemL
     }
 };
 
+const deleteAccounts = async (deleteAccounts: Account[]) => {
+    const updateItems = [];
+
+    if (deleteAccounts.length) {
+        // eslint-disable-next-line no-restricted-syntax
+        for (const account of deleteAccounts) {
+            const id = account.Id;
+            const item = {
+                DeleteRequest: {
+                    Key: {
+                        "Id":{
+                            "S": id
+                        }
+                    },
+                },
+            };
+            updateItems.push(item);
+        }
+        await dynamoDb.batchWrite({
+            RequestItems: {
+                [process.env.accountsTable!]: [...updateItems],
+            },
+        }).promise();
+    }
+};
+
+
 const storeAccounts = async (accounts: Account[], reportId: string) => {
     const items = [];
 
@@ -396,9 +444,15 @@ const rawHandler = async (
     if (accountsToUpdate?.length) {
         const updatedAccounts = compareAccounts(accountsToUpdate, accounts);
 
+        const toBeDeletedAccounts = getDeleteAccounts(accountsToUpdate, accounts);
+
         while (updatedAccounts?.length) {
             // eslint-disable-next-line no-await-in-loop
             await updateAccounts(updatedAccounts.splice(0, 25));
+        }
+
+        while (toBeDeletedAccounts?.length){
+            await deleteAccounts(toBeDeletedAccounts.splice(0,25))
         }
 
         return { message: 'Report successfully stored in db', id: reportId };

@@ -57,6 +57,9 @@ export interface Account {
     Id: string;
     Type: string;
     AcctNumber?: string;
+    TaxCode?: string;
+    TaxCodeDescription?: string;
+    Toggle?: string;
 }
 
 export interface AccountData {

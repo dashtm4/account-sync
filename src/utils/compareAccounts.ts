@@ -4,14 +4,16 @@ export const compareAccounts = (
     dbAccounts: AWS.DynamoDB.DocumentClient.ItemList,
     newAccounts: Account[],
 ) => {
-    dbAccounts.forEach((account) => {
-        newAccounts.forEach((newAccount) => {
+    newAccounts.forEach((newAccount) => {
+        dbAccounts.forEach((account) => {
             if (account.AccountName === newAccount.AccountName) {
                 // eslint-disable-next-line no-param-reassign
-                account.ValueCents = newAccount.ValueCents;
+                newAccount.TaxCode = account.TaxCode;
+                newAccount.TaxCodeDescription = account.TaxCodeDescription;
+                newAccount.Toggle = account.Toggle;
             }
         });
     });
 
-    return dbAccounts;
+    return newAccounts;
 };
