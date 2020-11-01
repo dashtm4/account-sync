@@ -366,8 +366,11 @@ const deleteAccounts = async (deleteAccounts: Account[]) => {
                     },
                 },
             };
+            console.log(JSON.stringify(item));
             updateItems.push(item);
         }
+        console.log("beforeBatchWritedeleteAccounts");
+        console.log(JSON.stringify(updateItems));
         if (updateItems.length > 0){
             await dynamoDb.batchWrite({
                 RequestItems: {
@@ -375,6 +378,7 @@ const deleteAccounts = async (deleteAccounts: Account[]) => {
                 },
             }).promise();
         }
+        console.log("afterBatchWriteDeleteAccounts");
     }
 };
 
