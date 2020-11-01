@@ -139,7 +139,15 @@ Resources:
             - AttributeName: "ReportId"
               KeyType: "HASH"
           Projection:
-            ProjectionType: ALL                        
+            ProjectionType: ALL      
+        - IndexName: "ReportIdByAccountName"
+          KeySchema:
+            - AttributeName: "ReportId"
+              KeyType: "HASH"
+            - AttributeName: "AccountName"
+              KeyType: "Range"
+          Projection:
+            ProjectionType: ALL                     
 
   TaxCodesTable:
     Type: AWS::DynamoDB::Table
