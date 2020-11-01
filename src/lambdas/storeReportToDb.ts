@@ -360,9 +360,7 @@ const deleteAccounts = async (deleteAccounts: Account[]) => {
             const item = {
                 DeleteRequest: {
                     Key: {
-                        "Id":{
-                            "S": account
-                        }
+                      "Id": account
                     },
                 },
             };
