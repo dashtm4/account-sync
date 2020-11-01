@@ -357,13 +357,11 @@ const deleteAccounts = async (deleteAccounts: Account[]) => {
     if (deleteAccounts.length) {
         // eslint-disable-next-line no-restricted-syntax
         for (const account of deleteAccounts) {
-            const id = account.Id;
-            console.log(JSON.stringify(account));
             const item = {
                 DeleteRequest: {
                     Key: {
                         "Id":{
-                            "S": id
+                            "S": account
                         }
                     },
                 },
