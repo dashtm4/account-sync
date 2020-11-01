@@ -367,7 +367,7 @@ const deleteAccounts = async (deleteAccounts: Account[]) => {
                     },
                 },
             };
-            console.log(item);
+            console.log(JSON.stringify(item));
             updateItems.push(item);
         }
         console.log("beforeBatchWritedeleteAccounts");
