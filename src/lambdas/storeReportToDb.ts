@@ -197,6 +197,7 @@ const getAndProcessReport = async (realmId: string,
                 ':t2': tokens[1],
             },
         }).promise();
+        console.log("after client table update");
     }
 
     report = await getReport(realmId, tokens[0], endPeriod, accountingMethod);
