@@ -6,13 +6,12 @@ export const compareAccounts = (
 ) => {
     newAccounts.forEach((newAccount) => {
         dbAccounts.forEach((account) => {
-            if (account.AccountName === newAccount.AccountName) {
+            if (account.QboId === newAccount.QboId) {
                 // eslint-disable-next-line no-param-reassign
+                newAccount.Id = account.Id;
                 newAccount.TaxCode = account.TaxCode;
                 newAccount.TaxCodeDescription = account.TaxCodeDescription;
                 newAccount.Toggle = account.Toggle;
-                //newAccount.AcctNumber = account.AcctNumber;
-                //newAccount.Description = account.Description;
             }
         });
     });

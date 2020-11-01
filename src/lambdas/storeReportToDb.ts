@@ -80,7 +80,7 @@ export const getDeleteAccounts = (
     dbAccounts.forEach((account) => {
         var found = false;
         newAccounts.forEach((newAccount) => {
-            if (account.AccountName === newAccount.AccountName) {
+            if (account.QboID === newAccount.QboId) {
                 // eslint-disable-next-line no-param-reassign
                 found = true;
             }
@@ -117,13 +117,17 @@ const processReport = (trialBalanceReport: QBTrialBalanceReport): InternalTrialB
         // eslint-disable-next-line no-continue
         if (!row.ColData) continue;
         const AccountName = row.ColData[0].value;
-        const Id = row.ColData[0].id!;
+        const QboId = row.ColData[0].id!;
         const ValueCents = row.ColData[1].value ? +row.ColData[1].value
             : -+row.ColData[2].value;
         const Type = row.ColData[1].value ? 'Debit' : 'Credit';
 
         accounts.push({
-            AccountName, Id, ValueCents, Type,
+            AccountName: AccountName, 
+            QboId: QboId,
+            Id: uuid4(); 
+            ValueCents: ValueCents, 
+            Type: Type, 
         });
     }
 
@@ -144,8 +148,7 @@ const addAcctInfo = (
 ) => {
     processedReport.Accounts.forEach((account) => {
         accountInfo.QueryResponse.Account.forEach((accInfo) => {
-            if (account.Id === accInfo.Id) {
-                // eslint-disable-next-line no-param-reassign
+            if (account.QboId === accInfo.Id) {
                 account.AcctNum = accInfo.AcctNum;
                 account.Description = accInfo.Description;
             }
@@ -202,10 +205,10 @@ const getAndProcessReport = async (realmId: string,
 
     const processedReport = processReport(report);
 
-    const ids = processedReport.Accounts.map((account) => account.Id);
+    const qboIds = processedReport.Accounts.map((account) => account.Id);
 
-    if(ids.length > 0){
-        const accountsInfo = await getAccountsInfo(realmId, tokens[0], ids);
+    if(qboIds.length > 0){
+        const accountsInfo = await getAccountsInfo(realmId, tokens[0], qboIds);
         return addAcctInfo(accountsInfo, processedReport);
     }else{
         return processedReport
@@ -327,13 +330,6 @@ const updateAccounts = async (updatedAccounts: AWS.DynamoDB.DocumentClient.ItemL
     if (updatedAccounts.length) {
         // eslint-disable-next-line no-restricted-syntax
         for (const account of updatedAccounts) {
-            var acctId
-            if (account.Id){
-                acctId = account.Id;
-            }else{
-                acctId = uuid4();
-            }
-            account.Id = acctId;
             await dynamoDb.put({
                 TableName: process.env.accountsTable!,
                 Item: account,

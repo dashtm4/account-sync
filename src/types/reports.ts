@@ -55,6 +55,7 @@ export interface Account {
     AccountName: string;
     ValueCents: number;
     Id: string;
+    QboId: string;
     Type: string;
     Description?: string;
     AcctNum?: string;
