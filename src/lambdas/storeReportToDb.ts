@@ -205,7 +205,7 @@ const getAndProcessReport = async (realmId: string,
 
     const processedReport = processReport(report);
 
-    const qboIds = processedReport.Accounts.map((account) => account.Id);
+    const qboIds = processedReport.Accounts.map((account) => account.QboId);
 
     if(qboIds.length > 0){
         const accountsInfo = await getAccountsInfo(realmId, tokens[0], qboIds);
