@@ -183,8 +183,7 @@ const getAndProcessReport = async (realmId: string,
         }{
             clientId = uuid4();
         }
-
-
+        console.log("before client table update");
         await dynamoDb.update({
             TableName: process.env.clientsTable!,
             Key: { Id: clientId},
@@ -339,6 +338,7 @@ const updateAccounts = async (updatedAccounts: AWS.DynamoDB.DocumentClient.ItemL
             }else{
                 acctId = uuid4();
             }
+            account.Id = acctId;
             await dynamoDb.put({
                 TableName: process.env.accountsTable!,
                 Item: account,
