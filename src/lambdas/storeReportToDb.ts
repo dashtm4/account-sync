@@ -370,11 +370,13 @@ const deleteAccounts = async (deleteAccounts: Account[]) => {
             updateItems.push(item);
         }
         console.log("beforeBatchWritedeleteAccounts");
-        await dynamoDb.batchWrite({
-            RequestItems: {
-                [process.env.accountsTable!]: [...updateItems],
-            },
-        }).promise();
+        if (updateItems.length > 0){
+            await dynamoDb.batchWrite({
+                RequestItems: {
+                    [process.env.accountsTable!]: [...updateItems],
+                },
+            }).promise();
+        }
         console.log("afterBatchWriteDeleteAccounts");
     }
 };
