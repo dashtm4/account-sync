@@ -330,6 +330,8 @@ const updateAccounts = async (updatedAccounts: AWS.DynamoDB.DocumentClient.ItemL
     if (updatedAccounts.length) {
         // eslint-disable-next-line no-restricted-syntax
         for (const account of updatedAccounts) {
+            console.log("Updating Account...");
+            console.log(JSON.stringify(account));
             await dynamoDb.put({
                 TableName: process.env.accountsTable!,
                 Item: account,
