@@ -130,6 +130,8 @@ Resources:
           AttributeType: "S"
         - AttributeName: "ReportId"
           AttributeType: "S"
+        - AttributeName: "AccountName"
+          AttributeType: "S"
       KeySchema:
         - AttributeName: "Id"
           KeyType: "HASH"
