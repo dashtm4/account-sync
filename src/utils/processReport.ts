@@ -32,7 +32,7 @@ const processUltraTax = (accounts: AWS.DynamoDB.DocumentClient.ItemList) => {
             const taxCode = account.TaxCode;
             const acctNum = account.AcctNum ? account.AcctNum : account.AccountName;
             const value = account.ValueCents ? flipSign(account.Toggle, account.ValueCents) : '';
-            const name = account.Description ? account.Description : account.AccountName;
+            const name = account.AccountName;
             data.push(`${taxCode.withIndent()}${acctNum.withIndent()}${new Array(longest + 10 - value.toString().length).join(' ')}${value.toString()}${new Array(10).join(' ')}${name.substring(0, 29) + new Array(100 - name.length).join(' ')}`);
         }
     }
