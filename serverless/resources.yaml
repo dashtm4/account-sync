@@ -145,7 +145,7 @@ Resources:
             - AttributeName: "ReportId"
               KeyType: "HASH"
             - AttributeName: "AccountName"
-              KeyType: "Range"
+              KeyType: "RANGE"
           Projection:
             ProjectionType: ALL                     
 
