@@ -26,7 +26,7 @@ fs.readdir(path, (err, files) => {
                 EntityType = 'Corp (S)';
                 break;
             case 'csiI.txt':
-                EntityType = 'Sole Proprietor (L)';
+                EntityType = 'Sole Proprietor (I)';
                 break;
             case 'csiP.txt':
                 EntityType = 'Partnership (P)';
