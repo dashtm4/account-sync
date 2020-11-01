@@ -125,7 +125,7 @@ const processReport = (trialBalanceReport: QBTrialBalanceReport): InternalTrialB
         accounts.push({
             AccountName: AccountName, 
             QboId: QboId,
-            Id: uuid4(); 
+            Id: uuid4(),
             ValueCents: ValueCents, 
             Type: Type, 
         });
