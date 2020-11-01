@@ -2,7 +2,7 @@
 if (!String.prototype.withIndent) {
     // eslint-disable-next-line func-names
     String.prototype.withIndent = function (): String {
-        return this + new Array(20 - this.length).join(' ');
+        return this + new Array(40 - this.length).join(' ');
     };
 }
 
