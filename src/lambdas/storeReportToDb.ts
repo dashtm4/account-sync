@@ -177,10 +177,17 @@ const getAndProcessReport = async (realmId: string,
         } catch (e) {
             throw Boom.expectationFailed('Refresh token expired');
         }
+        var clientId = ""
+        if (Items[0].Id){
+            clientId = Items[0].Id;
+        }{
+            clientId = uuid4();
+        }
+
 
         await dynamoDb.update({
             TableName: process.env.clientsTable!,
-            Key: { Id: Items[0].Id },
+            Key: { Id: clientId},
             UpdateExpression: 'set #atoken = :t1, #rtoken = :t2',
             ExpressionAttributeNames: {
                 '#atoken': 'AccessToken',

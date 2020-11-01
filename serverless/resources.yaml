@@ -72,6 +72,8 @@ Resources:
          AttributeType: "S"
        - AttributeName: "Id"
          AttributeType: "S"
+       - AttributeName: "RealmId"
+         AttributeType: "S"
       KeySchema:
        - AttributeName: "Id"
          KeyType: "HASH"
@@ -79,6 +81,12 @@ Resources:
        - IndexName: "CognitoId"
          KeySchema:
           - AttributeName: "CognitoId"
+            KeyType: "HASH"
+         Projection:
+            ProjectionType: ALL
+       - IndexName: "RealmId"
+         KeySchema:
+          - AttributeName: "RealmId"
             KeyType: "HASH"
          Projection:
             ProjectionType: ALL
