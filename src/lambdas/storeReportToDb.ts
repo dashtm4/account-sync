@@ -358,6 +358,7 @@ const deleteAccounts = async (deleteAccounts: Account[]) => {
         // eslint-disable-next-line no-restricted-syntax
         for (const account of deleteAccounts) {
             const id = account.Id;
+            console.log(JSON.stringify(account));
             const item = {
                 DeleteRequest: {
                     Key: {
@@ -367,11 +368,8 @@ const deleteAccounts = async (deleteAccounts: Account[]) => {
                     },
                 },
             };
-            console.log(JSON.stringify(item));
             updateItems.push(item);
         }
-        console.log("beforeBatchWritedeleteAccounts");
-        console.log(updateItems);
         if (updateItems.length > 0){
             await dynamoDb.batchWrite({
                 RequestItems: {
@@ -379,7 +377,6 @@ const deleteAccounts = async (deleteAccounts: Account[]) => {
                 },
             }).promise();
         }
-        console.log("afterBatchWriteDeleteAccounts");
     }
 };
 
