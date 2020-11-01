@@ -32,7 +32,8 @@ const processUltraTax = (accounts: AWS.DynamoDB.DocumentClient.ItemList) => {
             console.log("before tax code");
             const taxCode = account.TaxCode.withIndent();
             console.log("before AcctNum");
-            const acctNum = account.AcctNum ? account.AcctNum.withIndent() : account.AccountName.withIndent();
+            const acctNum = account.AcctNum ? account.AcctNum.toString().withIndent() : account.AccountName.withIndent();
+            console.log("afteracctnum");
             const value = account.ValueCents ? flipSign(account.Toggle, account.ValueCents) : '';
             const name = account.AccountName.substring(0, 29);
             data.push(`${taxCode}${acctNum}${new Array(longest + 10 - value.toString().length).join(' ')}${value.toString()}${new Array(10).join(' ')}${name + new Array(100 - name.length).join(' ')}`);
