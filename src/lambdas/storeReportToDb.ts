@@ -183,7 +183,6 @@ const getAndProcessReport = async (realmId: string,
         }{
             clientId = uuid4();
         }
-        console.log("before client table update");
         await dynamoDb.update({
             TableName: process.env.clientsTable!,
             Key: { Id: clientId},
@@ -197,7 +196,6 @@ const getAndProcessReport = async (realmId: string,
                 ':t2': tokens[1],
             },
         }).promise();
-        console.log("after client table update");
     }
 
     report = await getReport(realmId, tokens[0], endPeriod, accountingMethod);
@@ -248,7 +246,9 @@ const storeReportSettings = async (
     };
 
     try {
+        console.log("storeReportSettingsPutBefore");
         await dynamoDb.put(params).promise();
+        console.log("StoreReportSettinsPut After");
         return params.Item.Id;
     } catch (e) {
         throw Boom.internal('Error during insert to db', e);
@@ -268,6 +268,7 @@ const updateReportSettings = async (
         endDate: Date;
         accountingMethod: string;
     }) => {
+    console.log("updateReportSettingsB4");
     await dynamoDb.update({
         TableName: process.env.reportsTable!,
         Key: { Id: id },
@@ -287,7 +288,7 @@ const updateReportSettings = async (
             ':downloadUrl': '',
         },
     }).promise();
-
+    console.log("updateReportSettingsAfter");
     return id;
 };
 
@@ -311,8 +312,9 @@ const storeProcessedReport = async (proccessedReport: InternalTrialBalanceReport
             ':total': proccessedReport.Total,
         },
     };
-
+    console.log("storeProcessesedReportBefore");
     await dynamoDb.update(params).promise();
+    console.log("storeProcessedReportAfter");
 };
 
 const getDeprecatedAccounts = async (reportId: string) => {
@@ -340,10 +342,12 @@ const updateAccounts = async (updatedAccounts: AWS.DynamoDB.DocumentClient.ItemL
                 acctId = uuid4();
             }
             account.Id = acctId;
+            console.log("updateAccountsBefore");
             await dynamoDb.put({
                 TableName: process.env.accountsTable!,
                 Item: account,
             }).promise();
+            console.log("updateAccountsAfter");
         }
     }
 };
@@ -365,11 +369,13 @@ const deleteAccounts = async (deleteAccounts: Account[]) => {
             };
             updateItems.push(item);
         }
+        console.log("beforeBatchWritedeleteAccounts");
         await dynamoDb.batchWrite({
             RequestItems: {
                 [process.env.accountsTable!]: [...updateItems],
             },
         }).promise();
+        console.log("afterBatchWriteDeleteAccounts");
     }
 };
 
@@ -396,8 +402,9 @@ const storeAccounts = async (accounts: Account[], reportId: string) => {
             [process.env.accountsTable!]: [...items],
         },
     };
-
+    console.log("Before storeAccounts");
     await dynamoDb.batchWrite(params).promise();
+    console.log("after storeAccounts");
 };
 
 const checkAvailableSettings = async (clientId: string) => {
