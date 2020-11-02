@@ -28,7 +28,7 @@ const processUltraTax = (accounts: AWS.DynamoDB.DocumentClient.ItemList) => {
         }
     }
     for (const account of accounts) {
-        if (account.TaxCode){
+        if (account.TaxCode && account.ValueCents != 0){
             const taxCode = account.TaxCode.withIndent();
             const acctNum = account.AcctNum ? account.AcctNum.toString().withIndent() : account.AccountName.withIndent();
             const value = account.ValueCents ? flipSign(account.Toggle, account.ValueCents) : '';
