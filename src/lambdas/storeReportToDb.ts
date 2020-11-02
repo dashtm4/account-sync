@@ -243,6 +243,7 @@ const storeReportSettings = async (
             AccountingMethod: accountingMethod,
             EndDate: moment(endDate).format('YYYY-MM-DD'),
             EntityType: entityType,
+            LastUpdated: moment().format('MMMM Do YYYY, h:mm:ss a'),
         },
     };
 
@@ -270,19 +271,21 @@ const updateReportSettings = async (
     await dynamoDb.update({
         TableName: process.env.reportsTable!,
         Key: { Id: id },
-        UpdateExpression: 'set #d = :endDate, #s = :software, #r = :reportType, #u = :downloadUrl, #aM = :accountingMethod',
+        UpdateExpression: 'set #d = :endDate, #s = :software, #r = :reportType, #u = :downloadUrl, #aM = :accountingMethod, #lU = :lastUpdated',
         ExpressionAttributeNames: {
             '#d': 'EndDate',
             '#s': 'Software',
             '#r': 'ReportType',
             '#u': 'DownloadUrl',
             '#aM': 'AccountingMethod',
+            '#lU': 'LastUpdated',
         },
         ExpressionAttributeValues: {
             ':endDate': moment(endDate).format('YYYY-MM-DD'),
             ':software': software,
             ':reportType': reportType,
             ':accountingMethod': accountingMethod,
+            ':lastUpdated': moment().format('MMMM Do YYYY, h:mm:ss a'),
             ':downloadUrl': '',
         },
     }).promise();
@@ -293,13 +296,14 @@ const storeProcessedReport = async (proccessedReport: InternalTrialBalanceReport
     const params = {
         TableName: process.env.reportsTable!,
         Key: { Id: id },
-        UpdateExpression: 'set #sPeriod = :startPeriod, #ePeriod = :endPeriod, #cAt = :createdAt, #rBase = :repBasis, #t = :total',
+        UpdateExpression: 'set #sPeriod = :startPeriod, #ePeriod = :endPeriod, #cAt = :createdAt, #rBase = :repBasis, #t = :total, #lU = :lastUpdated',
         ExpressionAttributeNames: {
             '#sPeriod': 'StartPeriod',
             '#ePeriod': 'EndPeriod',
             '#cAt': 'CreatedAt',
             '#rBase': 'ReportBasis',
             '#t': 'Total',
+            '#lU': 'LastUpdated',
         },
         ExpressionAttributeValues: {
             ':startPeriod': proccessedReport.StartPeriod,
@@ -307,6 +311,7 @@ const storeProcessedReport = async (proccessedReport: InternalTrialBalanceReport
             ':createdAt': proccessedReport.CreatedAt,
             ':repBasis': proccessedReport.ReportBasis,
             ':total': proccessedReport.Total,
+            ':lastUpdated': moment().format('MMMM Do YYYY, h:mm:ss a'),
         },
     };
     await dynamoDb.update(params).promise();
