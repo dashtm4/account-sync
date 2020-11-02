@@ -58,6 +58,7 @@ type Report {
     StartPeriod: String
     Total: Total
     DownloadUrl: String
+    LastUpdated: String
 }
 
 type Account {
