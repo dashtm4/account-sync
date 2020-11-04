@@ -124,3 +124,13 @@ export interface GetReportEvent {
 export interface DefaultEvent {
     text: string;
 }
+
+export interface DeleteClientEvent {
+    pathParameters: { [name: string]: string };
+}
+
+
+export interface SuccessDeleteClientResponse {
+    message: string;
+    id: string;
+}
