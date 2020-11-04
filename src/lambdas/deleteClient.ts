@@ -112,7 +112,7 @@ const rawHandler = async (
         FilterExpression: 'CognitoId = :cognitoId and Id = :id',
         ExpressionAttributeValues: {
             ':cognitoId': cognitoId,
-            ':Id': clientId,
+            ':id': clientId,
         },
     }).promise();
 
