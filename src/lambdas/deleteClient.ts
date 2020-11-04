@@ -104,7 +104,7 @@ const rawHandler = async (
     event: APIGatewayEvent<DeleteClientEvent>,
 ): Promise<APIGatewayResponse<SuccessDeleteClientResponse>> => {
     const clientId = event.pathParameters["clientId"];
-
+    console.log(event.pathParameters);
     const { sub: cognitoId } = event.requestContext.authorizer.claims;
 
     const { Items } = await dynamoDb.query({
