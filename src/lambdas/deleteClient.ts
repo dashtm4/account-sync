@@ -36,10 +36,11 @@ const deleteAccounts = async (deleteAccounts: Account[]) => {
             };
             updateItems.push(item);
         }
-        if (updateItems.length > 0){
+        while (updateItems?.length) {
+            // eslint-disable-next-line no-await-in-loop
             await dynamoDb.batchWrite({
                 RequestItems: {
-                    [process.env.accountsTable!]: [...updateItems],
+                    [process.env.accountsTable!]: [...updateItems.splice(0, 25)],
                 },
             }).promise();
         }
