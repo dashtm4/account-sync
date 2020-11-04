@@ -119,7 +119,7 @@ const rawHandler = async (
 
     console.log("after client query");
 
-    if (Items) {
+    if (Items && Items[0]) {
         console.log("Items");
         console.log(JSON.stringify(Items));
         const reports = await getReports(Items[0].Id);
