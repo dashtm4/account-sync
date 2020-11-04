@@ -4,7 +4,7 @@ import Boom from '@hapi/boom';
 import middy from 'middy';
 import { v4 as uuid4 } from 'uuid';
 import { jsonBodyParser } from 'middy/middlewares';
-import { APIGatewayEvent, DeleteClientEvent, SuccessReportStoreResponse } from '../types/aws';
+import { APIGatewayEvent, DeleteClientEvent, SuccessDeleteClientResponse } from '../types/aws';
 import { APIGatewayResponse } from '../utils/aws';
 import { apiGatewayResponse } from '../middlewares/apiGateWayResponse';
 
@@ -102,13 +102,13 @@ const deleteClient = async (clientId: string) => {
 
 const rawHandler = async (
     event: APIGatewayEvent<DeleteClientEvent>,
-): Promise<APIGatewayResponse<SuccessReportStoreResponse>> => {
+): Promise<APIGatewayResponse<SuccessDeleteClientResponse>> => {
     const clientId = event.pathParameters["clientId"];
 
     const { sub: cognitoId } = event.requestContext.authorizer.claims;
 
     const { Items } = await dynamoDb.query({
-        TableName: process.env.clientsTable!,
+        TableName: process.env.reportsTable!,
         FilterExpression: 'CognitoId = :cognitoId',
         ExpressionAttributeValues: {
             ':cognitoId': cognitoId,
@@ -118,13 +118,16 @@ const rawHandler = async (
 
     if (Items) {
         const reports = await getReports(Items[0].Id);
-
-        for (const report of reports) {
-            const accounts = getAccounts(report.Id);
-            const acctIds = accounts.map((account) => account.Id);
-            await deleteAccounts(acctIds);
-            deleteReport(report.Id);
-            deleteClient(clientId)
+        if (reports){
+            for (const report of reports) {
+                const accounts = await getAccounts(report.Id);
+                if (accounts){
+                    const acctIds = accounts.map((account) => account.Id);
+                    await deleteAccounts(acctIds);
+                    deleteReport(report.Id);
+                    deleteClient(clientId)
+                }
+            }
         }
     } else throw Boom.badRequest('Client with this Id was not found');
 
@@ -134,5 +137,5 @@ const rawHandler = async (
 
 export const handler = middy(rawHandler)
     .use(jsonBodyParser())
-    .use(apiGatewayResponse<APIGatewayEvent,
+    .use(apiGatewayResponse<APIGatewayEvent<DeleteClientEvent>,
         SuccessDeleteClientResponse>());
