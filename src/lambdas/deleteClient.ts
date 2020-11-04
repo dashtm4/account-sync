@@ -109,7 +109,8 @@ const rawHandler = async (
 
     const { Items } = await dynamoDb.query({
         TableName: process.env.clientsTable!,
-        FilterExpression: 'CognitoId = :cognitoId and Id = :id',
+        KeyConditionExpression: 'Id = :id',
+        FilterExpression: 'CognitoId = :cognitoId',
         ExpressionAttributeValues: {
             ':cognitoId': cognitoId,
             ':id': clientId,
