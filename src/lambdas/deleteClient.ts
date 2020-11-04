@@ -117,16 +117,26 @@ const rawHandler = async (
         },
     }).promise();
 
+    console.log("after client query");
+
     if (Items) {
+        console.log("Items");
+        console.log(JSON.stringify(Items));
         const reports = await getReports(Items[0].Id);
         if (reports){
+            console.log(JSON.stringify(reports));
             for (const report of reports) {
+                console.log(JSON.stringify(report));
                 const accounts = await getAccounts(report.Id);
                 if (accounts){
+                    console.log(JSON.stringify(accounts));
                     const acctIds = accounts.map((account) => account.Id);
                     await deleteAccounts(acctIds);
+                    console.log('after delete accounts');
                     deleteReport(report.Id);
-                    deleteClient(clientId)
+                    console.log('after delete report');
+                    deleteClient(clientId);
+                    console.log('after delete client');
                 }
             }
         }
