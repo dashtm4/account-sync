@@ -74,14 +74,12 @@ const rawHandler = async (
 
     await s3.putObject(params).promise();
 
-    var url = s3.getSignedUrl('getObject', {Bucket: 'bucket', Key: key});
-
-    //const url = encodeURI(`${process.env.bucketLink}/${users[0].Email}-${client.CompanyName}/${key}`);
+    var url = s3.getSignedUrl('getObject', {Bucket: `${bucketName}/${users[0].Email}-${client.CompanyName}`, Key: key});
 
     await dynamoDb.update({
         TableName: process.env.reportsTable!,
         Key: { Id: report.Id },
-        UpdateExpression: 'set #url = :link AND #link_expiration = :link_expiration',
+        UpdateExpression: 'set #url = :link, #link_expiration = :link_expiration',
         ExpressionAttributeNames: {
             '#url': 'DownloadUrl',
             '#link_expiration': 'LinkExpiration'
