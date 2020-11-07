@@ -162,7 +162,7 @@ functions:
     handler: src/lambdas/forceReportSync.handler
     events:
       - http:
-          path: clients/{clientId}/sync
+          path: reports/{reportId}/sync
           method: post
           cors: true
           authorizer: ${self:custom.authorizer} 

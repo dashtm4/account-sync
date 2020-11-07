@@ -264,17 +264,16 @@ const storeAccounts = async (accounts: Account[], reportId: string) => {
     await dynamoDb.batchWrite(params).promise();
 };
 
-const getReportSettings = async (clientId: string) => {
-    const { Items: reports } = await dynamoDb.scan({
+const getReportSettings = async (reportId: string) => {
+    const { Item: report } = await dynamoDb.get({
         TableName: process.env.reportsTable!,
-        FilterExpression: 'ClientId = :clientId',
-        ExpressionAttributeValues: {
-            ':clientId': clientId,
+        Key: {
+            ':Id': reportId,
         },
     }).promise();
 
-    if (reports) {
-        return reports[0];
+    if (report) {
+        return report;
     }
 
     return undefined;
@@ -286,21 +285,22 @@ const rawHandler = async (
 
     const { sub: cognitoId } = event.requestContext.authorizer.claims;
 
-    const { Items } = await dynamoDb.scan({
-        TableName: process.env.clientsTable!,
-        FilterExpression: 'Id = :clientId and CognitoId = :cognitoId',
-        ExpressionAttributeValues: {
-            ':clientId': event.pathParameters.clientId,
-            ':cognitoId': cognitoId,
-        },
-    }).promise();
+    const reportSettings = await getReportSettings(event.pathParameters.reportId);
 
-    if (Items && Items.length > 0) {
-        
-    } else throw Boom.badRequest('Client with this Id was not found');
-
-    const reportSettings = await getReportSettings(Items[0].Id);
     if(reportSettings){
+        const { Items } = await dynamoDb.scan({
+            TableName: process.env.clientsTable!,
+            FilterExpression: 'Id = :clientId and CognitoId = :cognitoId',
+            ExpressionAttributeValues: {
+                ':clientId': reportSettings.clientId,
+                ':cognitoId': cognitoId,
+            },
+        }).promise();
+    
+        if (Items && Items.length > 0) {
+            
+        } else throw Boom.badRequest('Client ID does not match report queried');
+        
         const processedReport = await getAndProcessReport(Items[0].RealmId,
             reportSettings.endDate, reportSettings.accountingMethod, Items);
         if (processedReport){
