@@ -150,7 +150,7 @@ const getAndProcessReport = async (realmId: string,
     return undefined;
 };
 
-const processReportWithAccounts = async (trialBalanceReport: QBTrialBalanceReport, realmId, token){
+const processReportWithAccounts = async (trialBalanceReport: QBTrialBalanceReport, realmId: string, token: string) => {
     const processedReport = processReport(trialBalanceReport);
 
     const qboIds = processedReport.Accounts.map((account) => account.QboId);
@@ -299,7 +299,7 @@ const rawHandler = async (
         },
     }).promise();
 
-    if (Items && Items.length > 0 {
+    if (Items && Items.length > 0) {
         
     } else throw Boom.badRequest('Client with this Id was not found');
 
