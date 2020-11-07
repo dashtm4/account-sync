@@ -288,6 +288,8 @@ const rawHandler = async (
     const reportSettings = await getReportSettings(event.pathParameters.reportId);
 
     if(reportSettings){
+        console.log("in report settings");
+        console.log(JSON.stringify(reportSettings));
         const { Items } = await dynamoDb.scan({
             TableName: process.env.clientsTable!,
             FilterExpression: 'Id = :clientId and CognitoId = :cognitoId',
