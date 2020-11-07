@@ -268,7 +268,7 @@ const getReportSettings = async (reportId: string) => {
     const { Item: report } = await dynamoDb.get({
         TableName: process.env.reportsTable!,
         Key: {
-            ':Id': reportId,
+            Id: reportId,
         },
     }).promise();
 
