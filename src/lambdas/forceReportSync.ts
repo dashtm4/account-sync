@@ -285,7 +285,7 @@ const getReportSettings = async (clientId: string) => {
 };
 
 const rawHandler = async (
-    event: APIGatewayEvent<GetReportEvent>,
+    event: APIGatewayEvent<SyncReportEvent>,
 ): Promise<APIGatewayResponse<SuccessReportStoreResponse>> => {
 
     const { sub: cognitoId } = event.requestContext.authorizer.claims;
