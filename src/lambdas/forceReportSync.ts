@@ -124,12 +124,8 @@ const getAndProcessReport = async (realmId: string,
         } catch (e) {
             throw Boom.expectationFailed('Refresh token expired');
         }
-        var clientId = ""
-        if (Items[0].Id){
-            clientId = Items[0].Id;
-        }{
-            clientId = uuid4();
-        }
+        const clientId = Items[0].Id;
+
         await dynamoDb.update({
             TableName: process.env.clientsTable!,
             Key: { Id: clientId},
