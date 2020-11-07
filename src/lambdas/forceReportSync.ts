@@ -4,7 +4,7 @@ import Boom from '@hapi/boom';
 import middy from 'middy';
 import { v4 as uuid4 } from 'uuid';
 import { jsonBodyParser } from 'middy/middlewares';
-import { APIGatewayEvent, GetReportEvent, SuccessReportStoreResponse } from '../types/aws';
+import { APIGatewayEvent, SyncReportEvent, SuccessReportStoreResponse } from '../types/aws';
 import {
     QBTrialBalanceReport, InternalTrialBalanceReport,
     Account, AccountInfoResponse,
@@ -325,8 +325,6 @@ const rawHandler = async (
                 while (toBeDeletedAccounts?.length){
                     await deleteAccounts(toBeDeletedAccounts.splice(0,25))
                 }
-        
-                return { message: 'Report successfully stored in db', id: reportSettings.Id };
             }
         
             while (accounts.length) {
@@ -334,7 +332,7 @@ const rawHandler = async (
                 await storeAccounts(accounts.splice(0, 25), reportSettings.Id);
             }
         
-            return { message: 'Report successfully stored in db', id: reportSettings.Id };
+            return { message: 'Report Updated', id: reportSettings.Id };
         }else{
             throw Boom.internal('Error Processing Report');
         }
@@ -343,5 +341,5 @@ const rawHandler = async (
 
 export const handler = middy(rawHandler)
     .use(jsonBodyParser())
-    .use(apiGatewayResponse<APIGatewayEvent<GetReportEvent>,
+    .use(apiGatewayResponse<APIGatewayEvent<SyncReportEvent>,
     APIGatewayResponse<SuccessReportStoreResponse>>());

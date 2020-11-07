@@ -129,6 +129,10 @@ export interface DeleteClientEvent {
     pathParameters: { [name: string]: string };
 }
 
+export interface SyncReportEvent {
+    pathParameters: { [clientId: string]: string };
+}
+
 
 export interface SuccessDeleteClientResponse {
     message: string;
