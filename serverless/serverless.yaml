@@ -158,6 +158,14 @@ functions:
           method: delete
           cors: true
           authorizer: ${self:custom.authorizer} 
+  ForceSync:
+    handler: src/lambdas/forceReportSync.handler
+    events:
+      - http:
+          path: reports/{clientId}/sync
+          method: post
+          cors: true
+          authorizer: ${self:custom.authorizer} 
 
   StoreIntuitTokens:
    handler: src/lambdas/storeTokens.handler

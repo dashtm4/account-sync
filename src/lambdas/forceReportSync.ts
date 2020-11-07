@@ -1,8 +1,6 @@
-import axios from 'axios';
 import moment from 'moment';
 import AWS from 'aws-sdk';
 import Boom from '@hapi/boom';
-import OAuthClient from 'intuit-oauth';
 import middy from 'middy';
 import { v4 as uuid4 } from 'uuid';
 import { jsonBodyParser } from 'middy/middlewares';
@@ -15,7 +13,6 @@ import { APIGatewayResponse } from '../utils/aws';
 import { apiGatewayResponse } from '../middlewares/apiGateWayResponse';
 import { compareAccounts } from '../utils/compareAccounts';
 import {getNewToken, getAccountsInfo, getReport} from '../utils/qbo_sync_utils';
-
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
@@ -110,9 +107,9 @@ const getAndProcessReport = async (realmId: string,
     let error: boolean = false;
 
     let tokens = [Items[0].AccessToken, Items[0].RefreshToken];
-
     try {
         report = await getReport(realmId, tokens[0], endPeriod, accountingMethod);
+        return await processReportWithAccounts(report, realmId, tokens[0]);  
     } catch (e) {
         if (e.response && e.response.status === 401) {
             // eslint-disable-next-line no-console
@@ -146,98 +143,27 @@ const getAndProcessReport = async (realmId: string,
                 ':t2': tokens[1],
             },
         }).promise();
+
+        report = await getReport(realmId, tokens[0], endPeriod, accountingMethod);
+        return await processReportWithAccounts(report, realmId, tokens[0]);        
     }
+    return undefined;
+};
 
-    report = await getReport(realmId, tokens[0], endPeriod, accountingMethod);
-
-    const processedReport = processReport(report);
+const processReportWithAccounts = async (trialBalanceReport: QBTrialBalanceReport, realmId, token){
+    const processedReport = processReport(trialBalanceReport);
 
     const qboIds = processedReport.Accounts.map((account) => account.QboId);
 
     if(qboIds.length > 0){
-        const accountsInfo = await getAccountsInfo(realmId, tokens[0], qboIds);
+        const accountsInfo = await getAccountsInfo(realmId, token, qboIds);
         return addAcctInfo(accountsInfo, processedReport);
     }else{
         return processedReport
     }
-};
+}
 
-const storeReportSettings = async (
-    entityType: string,
-    clientId: string,
-    companyName: string,
-    cognitoId: string,
-    {
-        reportType,
-        software,
-        endDate,
-        accountingMethod,
-    }: {
-        reportType: string;
-        software: string;
-        endDate: Date;
-        accountingMethod: string;
-    }) => {
-    const params = {
-        TableName: process.env.reportsTable!,
-        Item: {
-            Id: uuid4(),
-            CompanyName: companyName,
-            CognitoId: cognitoId,
-            ClientId: clientId,
-            ReportType: reportType,
-            Software: software,
-            AccountingMethod: accountingMethod,
-            EndDate: moment(endDate).format('YYYY-MM-DD'),
-            EntityType: entityType,
-            LastUpdated: moment().format('MMMM Do YYYY, h:mm:ss a'),
-        },
-    };
 
-    try {
-        await dynamoDb.put(params).promise();
-        return params.Item.Id;
-    } catch (e) {
-        throw Boom.internal('Error during insert to db', e);
-    }
-};
-
-const updateReportSettings = async (
-    id: string,
-    {
-        reportType,
-        software,
-        endDate,
-        accountingMethod,
-    }: {
-        reportType: string;
-        software: string;
-        endDate: Date;
-        accountingMethod: string;
-    }) => {
-    await dynamoDb.update({
-        TableName: process.env.reportsTable!,
-        Key: { Id: id },
-        UpdateExpression: 'set #d = :endDate, #s = :software, #r = :reportType, #u = :downloadUrl, #aM = :accountingMethod, #lU = :lastUpdated',
-        ExpressionAttributeNames: {
-            '#d': 'EndDate',
-            '#s': 'Software',
-            '#r': 'ReportType',
-            '#u': 'DownloadUrl',
-            '#aM': 'AccountingMethod',
-            '#lU': 'LastUpdated',
-        },
-        ExpressionAttributeValues: {
-            ':endDate': moment(endDate).format('YYYY-MM-DD'),
-            ':software': software,
-            ':reportType': reportType,
-            ':accountingMethod': accountingMethod,
-            ':lastUpdated': moment().format('MMMM Do YYYY, h:mm:ss a'),
-            ':downloadUrl': '',
-        },
-    }).promise();
-    return id;
-};
 
 const storeProcessedReport = async (proccessedReport: InternalTrialBalanceReport, id: string) => {
     const params = {
@@ -342,7 +268,7 @@ const storeAccounts = async (accounts: Account[], reportId: string) => {
     await dynamoDb.batchWrite(params).promise();
 };
 
-const checkAvailableSettings = async (clientId: string) => {
+const getReportSettings = async (clientId: string) => {
     const { Items: reports } = await dynamoDb.scan({
         TableName: process.env.reportsTable!,
         FilterExpression: 'ClientId = :clientId',
@@ -358,76 +284,61 @@ const checkAvailableSettings = async (clientId: string) => {
     return undefined;
 };
 
-const getCompanyName = async(clientId: string) =>{
-    const { Item } = await dynamoDb.get({
-        TableName: process.env.clientsTable!,
-        Key: { Id: clientId },
-    }).promise();
-    if (Item) {
-        return(Item.CompanyName);
-    }else{
-        return undefined;
-    }
-}
-
 const rawHandler = async (
     event: APIGatewayEvent<GetReportEvent>,
 ): Promise<APIGatewayResponse<SuccessReportStoreResponse>> => {
-    let reportId: string;
-
-    const { companySettings, entityType } = event.body;
 
     const { sub: cognitoId } = event.requestContext.authorizer.claims;
 
     const { Items } = await dynamoDb.scan({
         TableName: process.env.clientsTable!,
-        FilterExpression: 'RealmId = :realmId and CognitoId = :cognitoId',
+        FilterExpression: 'Id = :clientId and CognitoId = :cognitoId',
         ExpressionAttributeValues: {
-            ':realmId': event.pathParameters.realmId,
+            ':clientId': event.pathParameters.clientId,
             ':cognitoId': cognitoId,
         },
     }).promise();
 
-    if (Items) {
-        const reportCheck = await checkAvailableSettings(Items[0].Id);
-        const companyName = await getCompanyName(Items[0].Id);
-        reportId = reportCheck
-            ? await updateReportSettings(reportCheck.Id, companySettings)
-            : await storeReportSettings(entityType, Items[0].Id, companyName, cognitoId, companySettings);
+    if (Items && Items.length > 0 {
+        
     } else throw Boom.badRequest('Client with this Id was not found');
 
-    const processedReport = await getAndProcessReport(Items[0].RealmId,
-        companySettings.endDate, companySettings.accountingMethod, Items);
+    const reportSettings = await getReportSettings(Items[0].Id);
+    if(reportSettings){
+        const processedReport = await getAndProcessReport(Items[0].RealmId,
+            reportSettings.endDate, reportSettings.accountingMethod, Items);
+        if (processedReport){
+            await storeProcessedReport(processedReport, reportSettings.Id);
+            const accounts = processedReport.Accounts;
+            const accountsToUpdate = await getDeprecatedAccounts(reportSettings.Id);
 
-    await storeProcessedReport(processedReport, reportId);
-
-    const accounts = processedReport.Accounts;
-
-    const accountsToUpdate = await getDeprecatedAccounts(reportId);
-
-    if (accountsToUpdate?.length) {
-        const updatedAccounts = compareAccounts(accountsToUpdate, accounts);
-
-        const toBeDeletedAccounts = getDeleteAccounts(accountsToUpdate, accounts);
-
-        while (updatedAccounts?.length) {
-            // eslint-disable-next-line no-await-in-loop
-            await updateAccounts(updatedAccounts.splice(0, 25));
+            if (accountsToUpdate && accountsToUpdate.length) {
+                const updatedAccounts = compareAccounts(accountsToUpdate, accounts);
+        
+                const toBeDeletedAccounts = getDeleteAccounts(accountsToUpdate, accounts);
+        
+                while (updatedAccounts?.length) {
+                    // eslint-disable-next-line no-await-in-loop
+                    await updateAccounts(updatedAccounts.splice(0, 25));
+                }
+        
+                while (toBeDeletedAccounts?.length){
+                    await deleteAccounts(toBeDeletedAccounts.splice(0,25))
+                }
+        
+                return { message: 'Report successfully stored in db', id: reportSettings.Id };
+            }
+        
+            while (accounts.length) {
+                // eslint-disable-next-line no-await-in-loop
+                await storeAccounts(accounts.splice(0, 25), reportSettings.Id);
+            }
+        
+            return { message: 'Report successfully stored in db', id: reportSettings.Id };
+        }else{
+            throw Boom.internal('Error Processing Report');
         }
-
-        while (toBeDeletedAccounts?.length){
-            await deleteAccounts(toBeDeletedAccounts.splice(0,25))
-        }
-
-        return { message: 'Report successfully stored in db', id: reportId };
-    }
-
-    while (accounts.length) {
-        // eslint-disable-next-line no-await-in-loop
-        await storeAccounts(accounts.splice(0, 25), reportId);
-    }
-
-    return { message: 'Report successfully stored in db', id: reportId };
+    } else throw Boom.badRequest('No Report was not found');
 };
 
 export const handler = middy(rawHandler)
