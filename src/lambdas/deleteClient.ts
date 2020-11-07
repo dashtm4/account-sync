@@ -1,8 +1,6 @@
-import moment from 'moment';
 import AWS from 'aws-sdk';
 import Boom from '@hapi/boom';
 import middy from 'middy';
-import { v4 as uuid4 } from 'uuid';
 import { jsonBodyParser } from 'middy/middlewares';
 import { APIGatewayEvent, DeleteClientEvent, SuccessDeleteClientResponse } from '../types/aws';
 import { APIGatewayResponse } from '../utils/aws';
@@ -118,8 +116,6 @@ const rawHandler = async (
         },
     }).promise();
 
-    console.log("after client query");
-
     if (Items && Items[0]) {
         console.log("Items");
         console.log(JSON.stringify(Items));
@@ -133,11 +129,8 @@ const rawHandler = async (
                     console.log(JSON.stringify(accounts));
                     const acctIds = accounts.map((account) => account.Id);
                     await deleteAccounts(acctIds);
-                    console.log('after delete accounts');
                     deleteReport(report.Id);
-                    console.log('after delete report');
                     deleteClient(clientId);
-                    console.log('after delete client');
                 }
             }
         }
