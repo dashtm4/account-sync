@@ -137,14 +137,15 @@ const rawHandler = async (
                 while (toBeDeletedAccounts?.length){
                     await deleteAccounts(toBeDeletedAccounts.splice(0,25), dynamoDb)
                 }
+                return { message: 'Report Updated via Update Accounts', id: reportSettings.Id };
             }
         
             while (accounts.length) {
                 // eslint-disable-next-line no-await-in-loop
                 await storeAccounts(accounts.splice(0, 25), reportSettings.Id, dynamoDb);
             }
+            return { message: 'Report Updated via Store Accounts', id: reportSettings.Id };
         
-            return { message: 'Report Updated', id: reportSettings.Id };
         }else{
             throw Boom.internal('Error Processing Report');
         }
