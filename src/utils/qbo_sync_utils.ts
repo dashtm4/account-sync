@@ -141,7 +141,10 @@ export const getDeleteAccounts = (
     const deleteAccounts = Array<Account>();
     dbAccounts.forEach((account) => {
         var found = false;
+        console.log("looking for account " + account.Id);
         newAccounts.forEach((newAccount) => {
+            console.log("checking against newAccount....");
+            console.log(JSON.stringify(newAccount));
             if (account.Id === newAccount) {
                 // eslint-disable-next-line no-param-reassign
                 found = true;
