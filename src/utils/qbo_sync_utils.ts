@@ -139,6 +139,9 @@ export const getDeleteAccounts = (
     newAccounts: Account[],
 ) => {
     const deleteAccounts = Array<Account>();
+    console.log("DB Accounts");
+    console.log(JSON.stringify(dbAccounts));
+    console.log(JSON.stringify(newAccounts));
     dbAccounts.forEach((account) => {
         var found = false;
         newAccounts.forEach((newAccount) => {
@@ -228,29 +231,4 @@ export const deleteAccounts = async (deleteAccounts: Account[],dynamoDb: AWS.Dyn
             }).promise();
         }
     }
-};
-
-export const storeAccounts = async (accounts: Account[], reportId: string, dynamoDb: AWS.DynamoDB.DocumentClient) => {
-    const items = [];
-
-    // eslint-disable-next-line no-restricted-syntax
-    for (const account of accounts) {
-        const item = {
-            PutRequest: {
-                // eslint-disable-next-line prefer-object-spread
-                Item: Object.assign({}, account, {
-                    Id: uuid4(),
-                    ReportId: reportId,
-                }),
-            },
-        };
-        items.push(item);
-    }
-
-    const params = {
-        RequestItems: {
-            [process.env.accountsTable!]: [...items],
-        },
-    };
-    await dynamoDb.batchWrite(params).promise();
 };
