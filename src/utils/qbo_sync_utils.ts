@@ -145,9 +145,11 @@ export const getDeleteAccounts = (
             if (account.Id === newAccount) {
                 // eslint-disable-next-line no-param-reassign
                 found = true;
+                console.log('Found Account ' + account.Id);
             }
         });
         if (found == false){
+            console.log('Adding account to be deleted ' + account.Id);
             deleteAccounts.push(account.Id);
         }
     });
