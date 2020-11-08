@@ -139,13 +139,10 @@ export const getDeleteAccounts = (
     newAccounts: Account[],
 ) => {
     const deleteAccounts = Array<Account>();
-    console.log("DB Accounts");
-    console.log(JSON.stringify(dbAccounts));
-    console.log(JSON.stringify(newAccounts));
     dbAccounts.forEach((account) => {
         var found = false;
         newAccounts.forEach((newAccount) => {
-            if (account.QboID === newAccount.QboId) {
+            if (account.Id === newAccount) {
                 // eslint-disable-next-line no-param-reassign
                 found = true;
             }
