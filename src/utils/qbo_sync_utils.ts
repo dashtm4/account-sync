@@ -71,6 +71,7 @@ export const addAcctInfo = (
         accountInfo.QueryResponse.Account.forEach((accInfo) => {
             if (account.QboId === accInfo.Id) {
                 account.AcctNum = accInfo.AcctNum;
+                account.AccountName = accInfo.Name;
                 account.FullyQualifiedName = accInfo.FullyQualifiedName;
                 account.Description = accInfo.Description;
                 if (accInfo.ParentRef && accInfo.ParentRef.value){
