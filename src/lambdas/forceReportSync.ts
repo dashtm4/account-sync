@@ -122,8 +122,12 @@ const rawHandler = async (
 
             if (accountsToUpdate && accountsToUpdate.length) {
                 const updatedAccounts = compareAccounts(accountsToUpdate, accounts);
+                console.log("Accounts to be Updated");
+                console.log(JSON.stringify(updatedAccounts));
         
                 const toBeDeletedAccounts = getDeleteAccounts(accountsToUpdate, accounts);
+                console.log("Accts being deleted");
+                console.log(JSON.stringify(toBeDeletedAccounts));
         
                 while (updatedAccounts?.length) {
                     // eslint-disable-next-line no-await-in-loop
