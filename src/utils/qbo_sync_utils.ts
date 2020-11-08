@@ -232,3 +232,28 @@ export const deleteAccounts = async (deleteAccounts: Account[],dynamoDb: AWS.Dyn
         }
     }
 };
+
+export const storeAccounts = async (accounts: Account[], reportId: string, dynamoDb: AWS.DynamoDB.DocumentClient) => {
+    const items = [];
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const account of accounts) {
+        const item = {
+            PutRequest: {
+                // eslint-disable-next-line prefer-object-spread
+                Item: Object.assign({}, account, {
+                    Id: uuid4(),
+                    ReportId: reportId,
+                }),
+            },
+        };
+        items.push(item);
+    }
+
+    const params = {
+        RequestItems: {
+            [process.env.accountsTable!]: [...items],
+        },
+    };
+    await dynamoDb.batchWrite(params).promise();
+};
