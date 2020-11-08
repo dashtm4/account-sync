@@ -64,6 +64,7 @@ type Report {
 type Account {
     ReportId: String
     AccountName: String
+    AcctNum: String
     ValueCents: Float
     Id: String
     Type: String
