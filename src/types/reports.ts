@@ -54,6 +54,7 @@ export interface Option {
 export interface Account {
     AccountName: string;
     ValueCents: number;
+    ReportId?: string;
     Id: string;
     QboId: string;
     ParentQboId: string;

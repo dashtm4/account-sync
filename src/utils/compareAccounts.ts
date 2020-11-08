@@ -9,6 +9,7 @@ export const compareAccounts = (
             if (account.QboId === newAccount.QboId) {
                 // eslint-disable-next-line no-param-reassign
                 newAccount.Id = account.Id;
+                newAccount.ReportId = account.ReportId;
                 newAccount.TaxCode = account.TaxCode;
                 newAccount.TaxCodeDescription = account.TaxCodeDescription;
                 newAccount.Toggle = account.Toggle;
