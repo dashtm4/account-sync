@@ -73,7 +73,9 @@ export const addAcctInfo = (
                 account.AcctNum = accInfo.AcctNum;
                 account.FullyQualifiedName = accInfo.FullyQualifiedName;
                 account.Description = accInfo.Description;
-                account.ParentQboId = accInfo.ParentRef.value;
+                if (accInfo.ParentRef && accInfo.ParentRef.value){
+                    account.ParentQboId = accInfo.ParentRef.value;
+                }
             }
         });
     });
