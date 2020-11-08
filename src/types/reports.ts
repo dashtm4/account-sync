@@ -56,6 +56,8 @@ export interface Account {
     ValueCents: number;
     Id: string;
     QboId: string;
+    ParentQboId: string;
+    FullyQualifiedName: string;
     Type: string;
     Description?: string;
     AcctNum?: string;
@@ -68,6 +70,9 @@ export interface AccountData {
     Name: string;
     SubAccount: string;
     FullyQualifiedName: string;
+    ParentRef:{
+        value: string;
+    };
     Active: boolean;
     Classification: string;
     AccountType: string;
