@@ -109,7 +109,7 @@ input AccountIn {
     ValueCents: Float
     Id: String
     Type: String
-    AcctNumber: String
+    AcctNum: String
     TaxCode: String
     TaxCodeDescription: String
     Toggle: String
