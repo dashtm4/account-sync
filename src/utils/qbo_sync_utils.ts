@@ -237,6 +237,7 @@ export const deleteAccounts = async (deleteAccounts: Account[],dynamoDb: AWS.Dyn
 
 export const storeAccounts = async (accounts: Account[], reportId: string, dynamoDb: AWS.DynamoDB.DocumentClient) => {
     const items = [];
+    console.log("Storing Accounts with ReportId: " + reportId);
 
     // eslint-disable-next-line no-restricted-syntax
     for (const account of accounts) {
