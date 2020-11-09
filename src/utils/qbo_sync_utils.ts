@@ -141,18 +141,13 @@ export const getDeleteAccounts = (
     const deleteAccounts = Array<Account>();
     dbAccounts.forEach((account) => {
         var found = false;
-        console.log("looking for account " + account.Id);
         newAccounts.forEach((newAccount) => {
-            console.log("checking against newAccount....");
-            console.log(JSON.stringify(newAccount));
             if (account.Id === newAccount.Id) {
                 // eslint-disable-next-line no-param-reassign
                 found = true;
-                console.log('Found Account ' + account.Id);
             }
         });
         if (found == false){
-            console.log('Adding account to be deleted ' + account.Id);
             deleteAccounts.push(account.Id);
         }
     });
@@ -237,7 +232,6 @@ export const deleteAccounts = async (deleteAccounts: Account[],dynamoDb: AWS.Dyn
 
 export const storeAccounts = async (accounts: Account[], reportId: string, dynamoDb: AWS.DynamoDB.DocumentClient) => {
     const items = [];
-    console.log("Storing Accounts with ReportId: " + reportId);
 
     // eslint-disable-next-line no-restricted-syntax
     for (const account of accounts) {
