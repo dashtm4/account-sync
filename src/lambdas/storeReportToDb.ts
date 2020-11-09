@@ -88,11 +88,13 @@ const storeReportSettings = async (
         software,
         endDate,
         accountingMethod,
+        autoMap,
     }: {
         reportType: string;
         software: string;
         endDate: Date;
         accountingMethod: string;
+        autoMap: boolean;
     }) => {
     const params = {
         TableName: process.env.reportsTable!,
@@ -106,6 +108,7 @@ const storeReportSettings = async (
             AccountingMethod: accountingMethod,
             EndDate: moment(endDate).format('YYYY-MM-DD'),
             EntityType: entityType,
+            AutoMap: autoMap,
             LastUpdated: moment().format('MMMM Do YYYY, h:mm:ss a'),
         },
     };
@@ -125,16 +128,18 @@ const updateReportSettings = async (
         software,
         endDate,
         accountingMethod,
+        autoMap,
     }: {
         reportType: string;
         software: string;
         endDate: Date;
         accountingMethod: string;
+        autoMap: boolean;
     }) => {
     await dynamoDb.update({
         TableName: process.env.reportsTable!,
         Key: { Id: id },
-        UpdateExpression: 'set #d = :endDate, #s = :software, #r = :reportType, #u = :downloadUrl, #aM = :accountingMethod, #lU = :lastUpdated',
+        UpdateExpression: 'set #d = :endDate, #s = :software, #r = :reportType, #u = :downloadUrl, #aM = :accountingMethod, #autoMap = :autoMap, #lU = :lastUpdated',
         ExpressionAttributeNames: {
             '#d': 'EndDate',
             '#s': 'Software',
@@ -142,6 +147,7 @@ const updateReportSettings = async (
             '#u': 'DownloadUrl',
             '#aM': 'AccountingMethod',
             '#lU': 'LastUpdated',
+            '#autoMap': 'AutoMap',
         },
         ExpressionAttributeValues: {
             ':endDate': moment(endDate).format('YYYY-MM-DD'),
@@ -150,6 +156,7 @@ const updateReportSettings = async (
             ':accountingMethod': accountingMethod,
             ':lastUpdated': moment().format('MMMM Do YYYY, h:mm:ss a'),
             ':downloadUrl': '',
+            ':autoMap': autoMap,
         },
     }).promise();
     return id;

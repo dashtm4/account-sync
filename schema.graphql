@@ -59,6 +59,7 @@ type Report {
     Total: Total
     DownloadUrl: String
     LastUpdated: String
+    AutoMap: Boolean
 }
 
 type Account {
