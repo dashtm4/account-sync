@@ -132,6 +132,8 @@ Resources:
           AttributeType: "S"
         - AttributeName: "AccountName"
           AttributeType: "S"
+        - AttributeName: "AcctNumAccountNameSortKey"
+          AttributeType: "S"
       KeySchema:
         - AttributeName: "Id"
           KeyType: "HASH"
