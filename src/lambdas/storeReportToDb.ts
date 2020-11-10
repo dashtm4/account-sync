@@ -262,7 +262,7 @@ const rawHandler = async (
 
     await storeProcessedReport(processedReport, reportId, dynamoDb);
 
-    const accounts = processedReport.Accounts;
+    var accounts = processedReport.Accounts;
 
     const accountsToUpdate = await getDeprecatedAccounts(reportId, dynamoDb);
 
@@ -288,6 +288,10 @@ const rawHandler = async (
         return { message: 'Report successfully stored in db', id: reportId };
     }
 
+    if (companySettings.autoMap == true){
+        console.log("Running automap... setting is true");
+        accounts = await autoMapAccounts(accounts,cognitoId, entityType);
+    }
     while (accounts.length) {
         // eslint-disable-next-line no-await-in-loop
         await storeAccounts(accounts.splice(0, 25), reportId, cognitoId, entityType, dynamoDb);
