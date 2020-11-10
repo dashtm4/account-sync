@@ -70,7 +70,19 @@ provider:
             - dynamodb
             - ${self:custom.region}
             - !Ref AWS::AccountId
-            - table/${self:custom.db.accountstablename}           
+            - table/${self:custom.db.accountstablename}    
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource:
+        Fn::Join:
+          - ':'
+          - - arn
+            - aws
+            - dynamodb
+            - ${self:custom.region}
+            - !Ref AWS::AccountId
+            - table/${self:custom.db.accountstablename}/index/*          
     - Effect: Allow
       Action: 
         - dynamodb:* 
