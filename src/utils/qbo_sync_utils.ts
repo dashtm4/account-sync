@@ -197,10 +197,9 @@ export const updateAccounts = async (updatedAccounts: AWS.DynamoDB.DocumentClien
     if (updatedAccounts.length) {
         // eslint-disable-next-line no-restricted-syntax
         for (const account of updatedAccounts) {
-            account.AcctNumAccountNameSortKey = account.AcctNum + account.AccountName;
             await dynamoDb.put({
                 TableName: process.env.accountsTable!,
-                Item: account,
+                Item: addAccountSortKey(account),
             }).promise();
         }
     }
@@ -230,16 +229,25 @@ export const deleteAccounts = async (deleteAccounts: Account[],dynamoDb: AWS.Dyn
     }
 };
 
+const addAccountSortKey = (account: any) => {
+    if (account.AcctNum){
+        account.AcctNumAccountNameSortKey = account.AcctNum + account.AccountName;
+    }else{
+        account.AcctNumAccountNameSortKey = account.AccountName;
+    }
+    return account;
+}
+
 export const storeAccounts = async (accounts: Account[], reportId: string, dynamoDb: AWS.DynamoDB.DocumentClient) => {
     const items = [];
 
     // eslint-disable-next-line no-restricted-syntax
     for (const account of accounts) {
-        account.AcctNumAccountNameSortKey = account.AcctNum + account.AccountName;
+        
         const item = {
             PutRequest: {
                 // eslint-disable-next-line prefer-object-spread
-                Item: Object.assign({}, account, {
+                Item: Object.assign({}, addAccountSortKey(account), {
                     Id: uuid4(),
                     ReportId: reportId,
                 }),
