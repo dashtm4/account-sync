@@ -201,14 +201,10 @@ const autoMapAccounts = async(accounts: Account[], cognitoId: string, entityType
         },
     }).promise();
     if (existingAccounts){
-        console.log("Found existing accounts");
         var autoMappedAccounts = [];
         for(const a of accounts){
             for (const e of existingAccounts){
                 if (a.AccountName == e.AccountName && a.AcctNum == e.AcctNum){
-                    console.log("Found Account to AutoMap");
-                    console.log(JSON.stringify(a));
-                    console.log(JSON.stringify(e));
                     a.TaxCode = e.TaxCode;
                     a.TaxCodeDescription = e.TaxCodeDescription;
                     a.Toggle = e.Toggle;
@@ -217,7 +213,6 @@ const autoMapAccounts = async(accounts: Account[], cognitoId: string, entityType
                 }
             }
         }
-        console.log(JSON.stringify(autoMappedAccounts));
         return autoMappedAccounts;
     }
     return accounts;
@@ -263,11 +258,6 @@ const rawHandler = async (
         var updatedAccounts = compareAccounts(accountsToUpdate, accounts);
 
         const toBeDeletedAccounts = getDeleteAccounts(accountsToUpdate, accounts);
-    
-        if (companySettings.autoMap == true){
-            console.log("Running automap... setting is true");
-            updatedAccounts = await autoMapAccounts(updatedAccounts,cognitoId, entityType);
-        }
 
         while (updatedAccounts?.length) {
             // eslint-disable-next-line no-await-in-loop
