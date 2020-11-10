@@ -194,13 +194,6 @@ const autoMapAccounts = async(accounts: Account[], cognitoId: string, entityType
     const { Items: existingAccounts } = await dynamoDb.query({
         TableName: process.env.accountsTable!,
         IndexName: 'CognitoIdByEntityType',
-        AttributesToGet: [
-            'AcctNum',
-            'AccountName',
-            'TaxCode',
-            'TaxCodeDescription',
-            'Toggle',
-            ],
         FilterExpression: 'CognitoId = :cognitoId AND EntityType = :entityType',
         ExpressionAttributeValues: {
             ':cognitoId': cognitoId,
