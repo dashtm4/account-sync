@@ -265,9 +265,9 @@ const rawHandler = async (
         var updatedAccounts = compareAccounts(accountsToUpdate, accounts);
 
         const toBeDeletedAccounts = getDeleteAccounts(accountsToUpdate, accounts);
-
+    
         if (companySettings.autoMap == true){
-            updatedAccounts = await autoMapAccounts(updatedAccounts,cognitoId,entityType);
+            updatedAccounts = await autoMapAccounts(updatedAccounts,cognitoId, entityType);
         }
 
         while (updatedAccounts?.length) {
