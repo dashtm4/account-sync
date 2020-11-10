@@ -169,7 +169,9 @@ Resources:
             - AttributeName: "CognitoId"
               KeyType: "HASH"
             - AttributeName: "EntityType"
-              KeyType: "RANGE"                 
+              KeyType: "RANGE" 
+          Projection:
+            ProjectionType: ALL                
 
   TaxCodesTable:
     Type: AWS::DynamoDB::Table
