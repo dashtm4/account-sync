@@ -127,7 +127,7 @@ const rawHandler = async (
         
                 while (updatedAccounts?.length) {
                     // eslint-disable-next-line no-await-in-loop
-                    await updateAccounts(updatedAccounts.splice(0, 25),dynamoDb);
+                    await updateAccounts(updatedAccounts.splice(0, 25),dynamoDb, cognitoId, reportSettings.entityType);
                 }
         
                 while (toBeDeletedAccounts?.length){
@@ -138,7 +138,7 @@ const rawHandler = async (
         
             while (accounts.length) {
                 // eslint-disable-next-line no-await-in-loop
-                await storeAccounts(accounts.splice(0, 25), reportSettings.Id, dynamoDb);
+                await storeAccounts(accounts.splice(0, 25), reportSettings.Id, cognitoId, reportSettings.entityType, dynamoDb);
             }
             return { message: 'Report Updated via Store Accounts', id: reportSettings.Id };
         

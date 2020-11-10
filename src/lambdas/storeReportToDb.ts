@@ -190,6 +190,42 @@ const getCompanyName = async(clientId: string) =>{
     }
 }
 
+const autoMapAccounts = async(accounts: Account[], cognitoId: string, entityType: string) => {
+    const { Items: existingAccounts } = await dynamoDb.query({
+        TableName: process.env.accountsTable!,
+        IndexName: 'CognitoIdByEntityType',
+        AttributesToGet: [
+            'AcctNum',
+            'AccountName',
+            'TaxCode',
+            'TaxCodeDescription',
+            'Toggle',
+            ],
+        FilterExpression: 'CognitoId = :cognitoId AND EntityType = :entityType',
+        ExpressionAttributeValues: {
+            ':cognitoId': cognitoId,
+            ':entityType': entityType,
+        },
+    }).promise();
+    if (existingAccounts){
+        var autoMappedAccounts = [];
+        for(const a of accounts){
+            for (const e of existingAccounts){
+                if (a.AccountName == e.AccountName && a.AcctNum == e.AcctNum){
+                    a.TaxCode = e.TaxCode;
+                    a.TaxCodeDescription = e.TaxCodeDescription;
+                    a.Toggle = e.Toggle;
+                    autoMappedAccounts.push(a);
+                    break;
+                }
+            }
+        }
+        return autoMappedAccounts;
+    }
+    return accounts;
+
+}
+
 const rawHandler = async (
     event: APIGatewayEvent<GetReportEvent>,
 ): Promise<APIGatewayResponse<SuccessReportStoreResponse>> => {
@@ -226,13 +262,17 @@ const rawHandler = async (
     const accountsToUpdate = await getDeprecatedAccounts(reportId, dynamoDb);
 
     if (accountsToUpdate && accountsToUpdate.length) {
-        const updatedAccounts = compareAccounts(accountsToUpdate, accounts);
+        var updatedAccounts = compareAccounts(accountsToUpdate, accounts);
 
         const toBeDeletedAccounts = getDeleteAccounts(accountsToUpdate, accounts);
 
+        if (companySettings.autoMap == true){
+            updatedAccounts = await autoMapAccounts(updatedAccounts,cognitoId,entityType);
+        }
+
         while (updatedAccounts?.length) {
             // eslint-disable-next-line no-await-in-loop
-            await updateAccounts(updatedAccounts.splice(0, 25), dynamoDb);
+            await updateAccounts(updatedAccounts.splice(0, 25), dynamoDb, cognitoId, entityType);
         }
 
         while (toBeDeletedAccounts?.length){
@@ -244,7 +284,7 @@ const rawHandler = async (
 
     while (accounts.length) {
         // eslint-disable-next-line no-await-in-loop
-        await storeAccounts(accounts.splice(0, 25), reportId, dynamoDb);
+        await storeAccounts(accounts.splice(0, 25), reportId, cognitoId, entityType, dynamoDb);
     }
 
     return { message: 'Report successfully stored in db', id: reportId };

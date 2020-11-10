@@ -134,6 +134,10 @@ Resources:
           AttributeType: "S"
         - AttributeName: "AcctNumAccountNameSortKey"
           AttributeType: "S"
+        - AttributeName: "CognitoId"
+          AttributeType: "S"
+        - AttributeName: "EntityType"
+          AttributeType: "S"
       KeySchema:
         - AttributeName: "Id"
           KeyType: "HASH"
@@ -159,7 +163,13 @@ Resources:
             - AttributeName: "AcctNumAccountNameSortKey"
               KeyType: "RANGE"
           Projection:
-            ProjectionType: ALL                      
+            ProjectionType: ALL
+        - IndexName: "CognitoIdByEntityType"
+          KeySchema:
+            - AttributeName: "CognitoId"
+              KeyType: "HASH"
+            - AttributeName: "EntityType"
+              KeyType: "RANGE"                 
 
   TaxCodesTable:
     Type: AWS::DynamoDB::Table

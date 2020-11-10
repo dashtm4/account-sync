@@ -192,14 +192,14 @@ export const getDeprecatedAccounts = async (reportId: string, dynamoDb: AWS.Dyna
     return accountsToUpdate;
 };
 
-export const updateAccounts = async (updatedAccounts: AWS.DynamoDB.DocumentClient.ItemList, dynamoDb: AWS.DynamoDB.DocumentClient) => {
+export const updateAccounts = async (updatedAccounts: AWS.DynamoDB.DocumentClient.ItemList, dynamoDb: AWS.DynamoDB.DocumentClient, cognitoId: string, entityType: string) => {
 
     if (updatedAccounts.length) {
         // eslint-disable-next-line no-restricted-syntax
         for (const account of updatedAccounts) {
             await dynamoDb.put({
                 TableName: process.env.accountsTable!,
-                Item: addAccountSortKey(account),
+                Item: addAccountSortKey(account, cognitoId, entityType),
             }).promise();
         }
     }
@@ -229,16 +229,18 @@ export const deleteAccounts = async (deleteAccounts: Account[],dynamoDb: AWS.Dyn
     }
 };
 
-const addAccountSortKey = (account: any) => {
+const addAccountSortKey = (account: any, cognitoId: string, entityType: string) => {
     if (account.AcctNum){
         account.AcctNumAccountNameSortKey = account.AcctNum + account.AccountName;
     }else{
         account.AcctNumAccountNameSortKey = account.AccountName;
     }
+    account.CognitoId = cognitoId;
+    account.EntityType = entityType;
     return account;
 }
 
-export const storeAccounts = async (accounts: Account[], reportId: string, dynamoDb: AWS.DynamoDB.DocumentClient) => {
+export const storeAccounts = async (accounts: Account[], reportId: string, cognitoId: string, entityType: string, dynamoDb: AWS.DynamoDB.DocumentClient) => {
     const items = [];
 
     // eslint-disable-next-line no-restricted-syntax
@@ -247,7 +249,7 @@ export const storeAccounts = async (accounts: Account[], reportId: string, dynam
         const item = {
             PutRequest: {
                 // eslint-disable-next-line prefer-object-spread
-                Item: Object.assign({}, addAccountSortKey(account), {
+                Item: Object.assign({}, addAccountSortKey(account, cognitoId, entityType), {
                     Id: uuid4(),
                     ReportId: reportId,
                 }),

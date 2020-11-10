@@ -66,6 +66,8 @@ export interface Account {
     TaxCode?: string;
     TaxCodeDescription?: string;
     Toggle?: string;
+    CognitoId?: string;
+    EntityType?: string;
 }
 
 export interface AccountData {
