@@ -193,11 +193,11 @@ export const getDeprecatedAccounts = async (reportId: string, dynamoDb: AWS.Dyna
 };
 
 export const updateAccounts = async (updatedAccounts: AWS.DynamoDB.DocumentClient.ItemList, dynamoDb: AWS.DynamoDB.DocumentClient) => {
-    const updateItems = [];
 
     if (updatedAccounts.length) {
         // eslint-disable-next-line no-restricted-syntax
         for (const account of updatedAccounts) {
+            account.AcctNumAccountNameSortKey = account.AcctNum + account.AccountName;
             await dynamoDb.put({
                 TableName: process.env.accountsTable!,
                 Item: account,
@@ -235,6 +235,7 @@ export const storeAccounts = async (accounts: Account[], reportId: string, dynam
 
     // eslint-disable-next-line no-restricted-syntax
     for (const account of accounts) {
+        account.AcctNumAccountNameSortKey = account.AcctNum + account.AccountName;
         const item = {
             PutRequest: {
                 // eslint-disable-next-line prefer-object-spread

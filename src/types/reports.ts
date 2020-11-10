@@ -60,6 +60,7 @@ export interface Account {
     ParentQboId: string;
     FullyQualifiedName: string;
     Type: string;
+    AcctNumAccountNameSortKey?: string;
     Description?: string;
     AcctNum?: string;
     TaxCode?: string;
