@@ -149,7 +149,15 @@ Resources:
             - AttributeName: "AccountName"
               KeyType: "RANGE"
           Projection:
-            ProjectionType: ALL                     
+            ProjectionType: ALL   
+        - IndexName: "ReportIdBySortKey"
+          KeySchema:
+            - AttributeName: "ReportId"
+              KeyType: "HASH"
+            - AttributeName: "AcctNumAccountNameSortKey"
+              KeyType: "RANGE"
+          Projection:
+            ProjectionType: ALL                      
 
   TaxCodesTable:
     Type: AWS::DynamoDB::Table
