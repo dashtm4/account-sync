@@ -203,14 +203,19 @@ const autoMapAccounts = async(accounts: Account[], cognitoId: string, entityType
     if (existingAccounts){
         var autoMappedAccounts = [];
         for(const a of accounts){
+            var found_account = false;
             for (const e of existingAccounts){
                 if (a.AccountName == e.AccountName && a.AcctNum == e.AcctNum){
                     a.TaxCode = e.TaxCode;
                     a.TaxCodeDescription = e.TaxCodeDescription;
                     a.Toggle = e.Toggle;
                     autoMappedAccounts.push(a);
+                    found_account = true;
                     break;
                 }
+            }
+            if (found_account == false){
+                autoMappedAccounts.push(a);
             }
         }
         return autoMappedAccounts;
