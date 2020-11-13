@@ -7,6 +7,7 @@ import { APIGatewayResponse } from '../utils/aws';
 import { apiGatewayResponse } from '../middlewares/apiGateWayResponse';
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
+const eventBridge = new AWS.EventBridge({ region: 'us-east-1' }); 
 
 const rawHandler = async (event: APIGatewayEvent<null>)
 : Promise<APIGatewayResponse<DefaultResponse>> => {
@@ -40,7 +41,17 @@ const rawHandler = async (event: APIGatewayEvent<null>)
     } catch (e) {
         throw Boom.internal('Error during insert');
     }
-
+    eventBridge.putEvents({
+        Entries: [
+          {
+            EventBusName: 'accountant-sync',
+            Source: 'accountantsync.user.signup',
+            DetailType: 'UserSignUp',
+            Detail: JSON.stringify(params),
+        },
+        ]
+      }).promise()
+     }
     return { message: 'Successfully signed new user' };
 };
 

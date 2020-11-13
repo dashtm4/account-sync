@@ -128,6 +128,14 @@ provider:
   variableSyntax: "\\${((?!AWS|SecretName)[ ~:a-zA-Z0-9._@'\",\\-\\/\\(\\)\\*\\?]+?)}"
 
 functions:
+  AddUserToAirtable:
+   handler: src/lambdas/addUserToAirtable.handler
+   events:
+     - eventBridge:
+        eventBus: accountant-sync
+        pattern:
+           source:
+             - accountantsync.user.create
   UploadReportToS3:
     handler: src/lambdas/uploadToS3.handler
     events:
@@ -290,4 +298,4 @@ custom:
         name: Accounts
         description: Accounts table
         config:
-          tableName: ${self:custom.db.accountstablename}                
+          tableName: ${self:custom.db.accountstablename}                 
