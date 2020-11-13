@@ -147,6 +147,8 @@ functions:
         pattern:
            source:
              - accountantsync.user.signup
+   environment:
+     AIRTABLE_API_KEY: ${AIRTABLE_API_KEY}   
   UploadReportToS3:
     handler: src/lambdas/uploadToS3.handler
     events:
