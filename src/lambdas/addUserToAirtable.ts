@@ -8,7 +8,7 @@ export const handler = async (event: any)
     });
     var base = Airtable.base('appSgOJ4dAfje507d');
     console.log(JSON.stringify(event));
-    base('Contacts').create([
+    await base('Contacts').create([
         {
           "fields": {
             "Phone #": event.detail.Item.OfficePhoneNumber,
@@ -27,5 +27,6 @@ export const handler = async (event: any)
           console.log(record.getId());
         });
       });
+
 };
 
