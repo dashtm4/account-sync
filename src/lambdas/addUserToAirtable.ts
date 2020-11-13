@@ -11,9 +11,9 @@ export const handler = async (event: any)
     base('Contacts').create([
         {
           "fields": {
-            "Phone #": event.Detail.OfficePhoneNumber,
-            "Name": event.Detail.Name,
-            "Email Address": event.Detail.Address
+            "Phone #": event.detail.Item.OfficePhoneNumber,
+            "Name": event.detail.Item.Name,
+            "Email Address": event.detail.Item.Address
           }
         },
       ], function(err: any, records: any) {
