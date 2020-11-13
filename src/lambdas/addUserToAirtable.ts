@@ -8,25 +8,17 @@ export const handler = async (event: any)
     });
     var base = Airtable.base('appSgOJ4dAfje507d');
     console.log(JSON.stringify(event));
-    await base('Contacts').create([
-        {
-          "fields": {
-            "Phone #": event.detail.Item.OfficePhoneNumber,
-            "Name": event.detail.Item.Name,
-            "Email Address": event.detail.Item.Email
-          }
-        },
-      ], function(err: any, records: any) {
+    base('Contacts').create({
+        "Phone #": event.detail.Item.OfficePhoneNumber,
+        "Name": event.detail.Item.Name,
+        "Email Address": event.detail.Item.Email
+      }, function(err: any, record: any) {
         if (err) {
           console.log("Error creating record")
           console.error(err);
           return;
         }
-        records.forEach(function (record: any) {
-          console.log("Record Created");
-          console.log(record.getId());
-        });
+        console.log(record.getId());
       });
-
 };
 
