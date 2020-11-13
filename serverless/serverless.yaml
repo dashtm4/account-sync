@@ -114,7 +114,7 @@ provider:
             - "/*"                                
     - Effect: Allow
       Action:
-        - events:PutEvent
+        - events:PutEvents
       Resource: 
         Fn::Join:
           - ':'
