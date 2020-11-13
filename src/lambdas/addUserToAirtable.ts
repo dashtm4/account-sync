@@ -1,12 +1,5 @@
-import AWS from 'aws-sdk';
-import middy from 'middy';
-import { jsonBodyParser } from 'middy/middlewares';
-import Boom from '@hapi/boom';
-import { APIGatewayEvent, DefaultResponse } from '../types/aws';
-import { APIGatewayResponse } from '../utils/aws';
-import { apiGatewayResponse } from '../middlewares/apiGateWayResponse';
 
-const rawHandler = async (event: any)
+export const addUserToAirtable = async (event: any)
 : Promise<any> => {
     var Airtable = require('airtable');
     Airtable.configure({
