@@ -13,18 +13,19 @@ export const handler = async (event: any)
           "fields": {
             "Phone #": event.detail.Item.OfficePhoneNumber,
             "Name": event.detail.Item.Name,
-            "Email Address": event.detail.Item.Address
+            "Email Address": event.detail.Item.Email
           }
         },
       ], function(err: any, records: any) {
         if (err) {
+          console.log("Error creating record")
           console.error(err);
           return;
         }
         records.forEach(function (record: any) {
+          console.log("Record Created");
           console.log(record.getId());
         });
       });
-    return { message: 'Successfully signed new user' };
 };
 
