@@ -50,8 +50,8 @@ const rawHandler = async (event: APIGatewayEvent<null>)
             Detail: JSON.stringify(params),
         },
         ]
-      }).promise()
-     }
+      }).promise();
+
     return { message: 'Successfully signed new user' };
 };
 

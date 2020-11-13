@@ -22,12 +22,12 @@ const rawHandler = async (event: any)
             "Email Address": event.Detail.Address
           }
         },
-      ], function(err, records) {
+      ], function(err: any, records: any) {
         if (err) {
           console.error(err);
           return;
         }
-        records.forEach(function (record) {
+        records.forEach(function (record: any) {
           console.log(record.getId());
         });
       });
