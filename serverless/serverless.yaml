@@ -24,18 +24,6 @@ provider:
   timeout: 30
   iamRoleStatements:
     - Effect: Allow
-      Action:
-        - events:PutEvent
-      Resource: 
-        Fn::Join:
-          - ':'
-          - - arn
-            - aws
-            - events
-            - ${self:custom.region}
-            - !Ref AWS::AccountId
-            - event-bus/accountant-sync
-    - Effect: Allow
       Action: 
         - dynamodb:* 
       Resource: 
@@ -124,7 +112,18 @@ provider:
           - - "arn:aws:s3:::"
             - !Ref S3Bucket
             - "/*"                                
-
+    - Effect: Allow
+      Action:
+        - events:PutEvent
+      Resource: 
+        Fn::Join:
+          - ':'
+          - - arn
+            - aws
+            - events
+            - ${self:custom.region}
+            - !Ref AWS::AccountId
+            - event-bus/accountant-sync
   environment: 
     usersTable: ${self:custom.db.accsynctablename}
     clientsTable: ${self:custom.db.clientstablename}
