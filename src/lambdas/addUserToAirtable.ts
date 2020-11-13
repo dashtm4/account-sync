@@ -8,17 +8,18 @@ export const handler = async (event: any)
     });
     var base = Airtable.base('appSgOJ4dAfje507d');
     console.log(JSON.stringify(event));
-    base('Contacts').create({
+    return new Promise(base('Contacts').create({
         "Phone #": event.detail.Item.OfficePhoneNumber,
         "Name": event.detail.Item.Name,
         "Email Address": event.detail.Item.Email
-      }, function(err: any, record: any) {
+    }, function (err: any, record: any) {
+        console.log("callback executing");
         if (err) {
-          console.log("Error creating record")
-          console.error(err);
-          return;
+            console.log("Error creating record");
+            console.error(err);
+            return;
         }
         console.log(record.getId());
-      });
+    }));
 };
 
