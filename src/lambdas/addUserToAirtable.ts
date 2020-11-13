@@ -7,6 +7,7 @@ export const handler = async (event: any)
         apiKey: process.env.AIRTABLE_API_KEY
     });
     var base = Airtable.base('appSgOJ4dAfje507d');
+    console.log(JSON.stringify(event));
     base('Contacts').create([
         {
           "fields": {
