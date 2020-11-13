@@ -146,7 +146,7 @@ functions:
         eventBus: accountant-sync
         pattern:
            source:
-             - accountantsync.user.create
+             - accountantsync.user.signup
   UploadReportToS3:
     handler: src/lambdas/uploadToS3.handler
     events:
