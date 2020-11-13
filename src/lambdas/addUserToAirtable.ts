@@ -1,5 +1,5 @@
 
-export const addUserToAirtable = async (event: any)
+export const handler = async (event: any)
 : Promise<any> => {
     var Airtable = require('airtable');
     Airtable.configure({
