@@ -1,7 +1,5 @@
 
-export const handler = (event: any, context: any, callback: any)
-: Promise<any> => {
-    
+export const handler = function(event: any, context: any, callback: any) {
     console.log(JSON.stringify(event));
     var Airtable = require('airtable');
     Airtable.configure({
