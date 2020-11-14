@@ -1,5 +1,5 @@
 
-export const handler = async (event: any)
+export const handler = (event: any, context: any, callback: any)
 : Promise<any> => {
     
     console.log(JSON.stringify(event));
@@ -9,24 +9,21 @@ export const handler = async (event: any)
         apiKey: process.env.AIRTABLE_API_KEY
     });
     var base = Airtable.base('appSgOJ4dAfje507d');
-
-    var p = new Promise((resolve, reject) => {
-        resolve(base('Contacts').create({
-            "Phone #": event.detail.Item.OfficePhoneNumber,
-            "Name": event.detail.Item.Name,
-            "Email Address": event.detail.Item.Email
-        }, function (err: any, record: any) {
-            console.log("callback executing");
-            if (err) {
-                console.log("Error creating record");
-                console.error(err);
-                return;
-            }
+    base('Contacts').create({
+        "Phone #": event.detail.Item.OfficePhoneNumber,
+        "Name": event.detail.Item.Name,
+        "Email Address": event.detail.Item.Email
+    }, function (err: any, record: any) {
+        console.log("callback executing");
+        if (err) {
+            console.log("Error creating record");
+            console.error(err);
+            return callback(Error(err));
+        }else{
             console.log(record.getId());
-        }));
+            return callback(null, 200);
+        }
     });
-
-    return p;
 };
 
 
