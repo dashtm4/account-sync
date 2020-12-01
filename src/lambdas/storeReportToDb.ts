@@ -6,17 +6,18 @@ import { v4 as uuid4 } from 'uuid';
 import { jsonBodyParser } from 'middy/middlewares';
 import { APIGatewayEvent, GetReportEvent, SuccessReportStoreResponse } from '../types/aws';
 import {
-    QBTrialBalanceReport, 
-    Account
+    QBTrialBalanceReport,
+    Account,
 } from '../types/reports';
 import { APIGatewayResponse } from '../utils/aws';
 import { apiGatewayResponse } from '../middlewares/apiGateWayResponse';
 import { compareAccounts } from '../utils/compareAccounts';
-import {getNewToken, getAccountsInfo, getReport, 
-    addAcctInfo, processReport, getDeleteAccounts, 
-    storeProcessedReport,getDeprecatedAccounts, updateAccounts,
-    deleteAccounts, storeAccounts} from '../utils/qbo_sync_utils';
-
+import {
+    getNewToken, getAccountsInfo, getReport,
+    addAcctInfo, processReport, getDeleteAccounts,
+    storeProcessedReport, getDeprecatedAccounts, updateAccounts,
+    deleteAccounts, storeAccounts,
+} from '../utils/qbo_sync_utils';
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
@@ -43,15 +44,15 @@ const getAndProcessReport = async (realmId: string,
         } catch (e) {
             throw Boom.expectationFailed('Refresh token expired');
         }
-        var clientId = ""
-        if (Items[0].Id){
+        let clientId = '';
+        if (Items[0].Id) {
             clientId = Items[0].Id;
-        }{
+        } {
             clientId = uuid4();
         }
         await dynamoDb.update({
             TableName: process.env.clientsTable!,
-            Key: { Id: clientId},
+            Key: { Id: clientId },
             UpdateExpression: 'set #atoken = :t1, #rtoken = :t2',
             ExpressionAttributeNames: {
                 '#atoken': 'AccessToken',
@@ -70,12 +71,11 @@ const getAndProcessReport = async (realmId: string,
 
     const qboIds = processedReport.Accounts.map((account) => account.QboId);
 
-    if(qboIds.length > 0){
+    if (qboIds.length > 0) {
         const accountsInfo = await getAccountsInfo(realmId, tokens[0], qboIds);
         return addAcctInfo(accountsInfo, processedReport);
-    }else{
-        return processedReport
     }
+    return processedReport;
 };
 
 const storeReportSettings = async (
@@ -95,7 +95,8 @@ const storeReportSettings = async (
         endDate: Date;
         accountingMethod: string;
         autoMap: boolean;
-    }) => {
+    },
+) => {
     const params = {
         TableName: process.env.reportsTable!,
         Item: {
@@ -135,7 +136,8 @@ const updateReportSettings = async (
         endDate: Date;
         accountingMethod: string;
         autoMap: boolean;
-    }) => {
+    },
+) => {
     await dynamoDb.update({
         TableName: process.env.reportsTable!,
         Key: { Id: id },
@@ -178,19 +180,18 @@ const checkAvailableSettings = async (clientId: string) => {
     return undefined;
 };
 
-const getCompanyName = async(clientId: string) =>{
+const getCompanyName = async (clientId: string) => {
     const { Item } = await dynamoDb.get({
         TableName: process.env.clientsTable!,
         Key: { Id: clientId },
     }).promise();
     if (Item) {
-        return(Item.CompanyName);
-    }else{
-        return undefined;
+        return (Item.CompanyName);
     }
-}
+    return undefined;
+};
 
-const autoMapAccounts = async(accounts: Account[], cognitoId: string, entityType: string) => {
+const autoMapAccounts = async (accounts: Account[], cognitoId: string, entityType: string) => {
     const { Items: existingAccounts } = await dynamoDb.query({
         TableName: process.env.accountsTable!,
         IndexName: 'CognitoIdByEntityType',
@@ -200,12 +201,12 @@ const autoMapAccounts = async(accounts: Account[], cognitoId: string, entityType
             ':entityType': entityType,
         },
     }).promise();
-    if (existingAccounts){
-        var autoMappedAccounts = [];
-        for(const a of accounts){
-            var found_account = false;
-            for (const e of existingAccounts){
-                if (a.AccountName == e.AccountName && a.AcctNum == e.AcctNum && found_account == false){
+    if (existingAccounts) {
+        const autoMappedAccounts = [];
+        for (const a of accounts) {
+            let found_account = false;
+            for (const e of existingAccounts) {
+                if (a.AccountName == e.AccountName && a.AcctNum == e.AcctNum && found_account == false) {
                     a.TaxCode = e.TaxCode;
                     a.TaxCodeDescription = e.TaxCodeDescription;
                     a.Toggle = e.Toggle;
@@ -213,15 +214,14 @@ const autoMapAccounts = async(accounts: Account[], cognitoId: string, entityType
                     found_account = true;
                 }
             }
-            if (found_account == false){
+            if (found_account === false) {
                 autoMappedAccounts.push(a);
             }
         }
         return autoMappedAccounts;
     }
     return accounts;
-
-}
+};
 
 const rawHandler = async (
     event: APIGatewayEvent<GetReportEvent>,
@@ -254,12 +254,12 @@ const rawHandler = async (
 
     await storeProcessedReport(processedReport, reportId, dynamoDb);
 
-    var accounts = processedReport.Accounts;
+    let accounts = processedReport.Accounts;
 
     const accountsToUpdate = await getDeprecatedAccounts(reportId, dynamoDb);
 
     if (accountsToUpdate && accountsToUpdate.length) {
-        var updatedAccounts = compareAccounts(accountsToUpdate, accounts);
+        const updatedAccounts = compareAccounts(accountsToUpdate, accounts);
 
         const toBeDeletedAccounts = getDeleteAccounts(accountsToUpdate, accounts);
 
@@ -268,16 +268,16 @@ const rawHandler = async (
             await updateAccounts(updatedAccounts.splice(0, 25), dynamoDb, cognitoId, entityType);
         }
 
-        while (toBeDeletedAccounts?.length){
-            await deleteAccounts(toBeDeletedAccounts.splice(0,25), dynamoDb)
+        while (toBeDeletedAccounts?.length) {
+            await deleteAccounts(toBeDeletedAccounts.splice(0, 25), dynamoDb);
         }
 
         return { message: 'Report successfully stored in db', id: reportId };
     }
 
-    if (companySettings.autoMap == true){
-        console.log("Running automap... setting is true");
-        accounts = await autoMapAccounts(accounts,cognitoId, entityType);
+    if (companySettings.autoMap == true) {
+        console.log('Running automap... setting is true');
+        accounts = await autoMapAccounts(accounts, cognitoId, entityType);
     }
     while (accounts.length) {
         // eslint-disable-next-line no-await-in-loop

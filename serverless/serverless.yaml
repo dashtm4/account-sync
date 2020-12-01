@@ -4,7 +4,7 @@ service:
 package:
   individually: false
   exclude:
-    - node_modules/**
+   - node_modules/**
 
 plugins:
   - serverless-dotenv-plugin
@@ -12,21 +12,21 @@ plugins:
   - serverless-webpack
   - serverless-iam-roles-per-function
   - serverless-offline
- 
+
 resources: ${file(serverless/resources.yaml)}
 
-provider: 
+provider:
   name: aws
   runtime: nodejs10.x
   stage: ${self:custom.stage}
   region: ${self:custom.region}
-  memorySize: 128 
+  memorySize: 128
   timeout: 30
   iamRoleStatements:
     - Effect: Allow
-      Action: 
-        - dynamodb:* 
-      Resource: 
+      Action:
+        - dynamodb:*
+      Resource:
         Fn::Join:
           - ':'
           - - arn
@@ -36,9 +36,9 @@ provider:
             - !Ref AWS::AccountId
             - table/${self:custom.db.accsynctablename}
     - Effect: Allow
-      Action: 
-        - dynamodb:* 
-      Resource: 
+      Action:
+        - dynamodb:*
+      Resource:
         Fn::Join:
           - ':'
           - - arn
@@ -48,9 +48,9 @@ provider:
             - !Ref AWS::AccountId
             - table/${self:custom.db.clientstablename}
     - Effect: Allow
-      Action: 
-        - dynamodb:* 
-      Resource: 
+      Action:
+        - dynamodb:*
+      Resource:
         Fn::Join:
           - ':'
           - - arn
@@ -70,7 +70,7 @@ provider:
             - dynamodb
             - ${self:custom.region}
             - !Ref AWS::AccountId
-            - table/${self:custom.db.accountstablename}    
+            - table/${self:custom.db.accountstablename}
     - Effect: Allow
       Action:
         - dynamodb:*
@@ -82,11 +82,11 @@ provider:
             - dynamodb
             - ${self:custom.region}
             - !Ref AWS::AccountId
-            - table/${self:custom.db.accountstablename}/index/*          
+            - table/${self:custom.db.accountstablename}/index/*
     - Effect: Allow
-      Action: 
-        - dynamodb:* 
-      Resource: 
+      Action:
+        - dynamodb:*
+      Resource:
         Fn::Join:
           - ':'
           - - arn
@@ -94,16 +94,16 @@ provider:
             - dynamodb
             - ${self:custom.region}
             - !Ref AWS::AccountId
-            - table/${self:custom.db.taxcodestablename}                             
+            - table/${self:custom.db.taxcodestablename}
     - Effect: Allow
       Action:
         - appsync:GraphQL
-      Resource: 
+      Resource:
         - Fn::Join:
             - '/'
             - - !Ref GraphQlApi
               - '*'
-    - Effect: Allow 
+    - Effect: Allow
       Action:
         - s3:*
       Resource:
@@ -133,6 +133,7 @@ provider:
     clientId: ${self:custom.clientid}
     environment: ${self:custom.env}
     redirectUri: ${self:custom.redirecturi}
+    redirectDashboardUri: ${self:custom.redirectdashboarduri}
     AIRTABLE_API_KEY: ${self:custom.AIRTABLE_API_KEY}  
     intuitAPI: ${self:custom.intuituri}
     reportBucket: ${self:custom.reportBucketName}
@@ -173,7 +174,7 @@ functions:
         method: post
         cors: true
         authorizer: ${self:custom.authorizer}
-   
+
   GetReportFromIntuit:
     handler: src/lambdas/storeReportToDb.handler
     events:
@@ -181,7 +182,26 @@ functions:
           path: report-settings/{realmId}
           method: post
           cors: true
-          authorizer: ${self:custom.authorizer}    
+          authorizer: ${self:custom.authorizer}
+
+  CallBack:
+    handler: src/lambdas/callback.handler
+    events:
+      - http:
+          path: callback
+          method: get
+          cors: true
+          authorizer: ${self:custom.authorizer}
+
+  CheckRefreshTokens:
+    handler: src/lambdas/checkRefreshTokens.handler
+    events:
+      - http:
+          path: check-refresh-tokens
+          method: post
+          cors: true
+          authorizer: ${self:custom.authorizer}
+
   DeleteClient:
     handler: src/lambdas/deleteClient.handler
     events:
@@ -189,7 +209,8 @@ functions:
           path: clients/{clientId}
           method: delete
           cors: true
-          authorizer: ${self:custom.authorizer} 
+          authorizer: ${self:custom.authorizer}
+
   ForceSync:
     handler: src/lambdas/forceReportSync.handler
     events:
@@ -197,7 +218,7 @@ functions:
           path: reports/{reportId}/sync
           method: post
           cors: true
-          authorizer: ${self:custom.authorizer} 
+          authorizer: ${self:custom.authorizer}
 
   StoreIntuitTokens:
    handler: src/lambdas/storeTokens.handler
@@ -208,19 +229,19 @@ functions:
          cors: true
          authorizer: ${self:custom.authorizer}
 
-  IntuitSignInRedirect:       
+  IntuitSignInRedirect:
    handler: src/lambdas/intuitSignInRedirect.handler
    events:
      - http:
-         path: intuitSignIn/
+         path: intuitSignIn
          method: get
          cors: true
          authorizer: ${self:custom.authorizer}
 
-custom: 
+custom:
   stage: ${opt:stage, env:STAGE}
   region: ${opt:region, 'us-east-1'}
-  db: 
+  db:
     accsynctablename: ${opt:stage, env:STAGE}_users_table
     clientstablename: ${opt:stage, env:STAGE}_clients_table
     reportstablename: ${opt:stage, env:STAGE}_reports_table
@@ -230,11 +251,12 @@ custom:
   clientid: ${env:CLIENT_ID}
   env: ${env:ENVIRONMENT}
   redirecturi: ${env:REDIRECT_URI}
+  redirectdashboarduri: ${env:REDIRECT_DASHBOARD_URI}
   AIRTABLE_API_KEY: ${env:AIRTABLE_API_KEY}
   intuituri: ${env:INTUIT_API_URI}
   reportBucketName: ${env:REPORT_BUCKET_NAME}
   bucketLink: ${env:BUCKET_LINK}
-  authorizer: 
+  authorizer:
     type: COGNITO_USER_POOLS
     authorizerId:
       Ref: ApiGatewayAuthorizer
@@ -255,7 +277,7 @@ custom:
         type: Query
         field: getAccountsByReportId
         request: 'scanAccount-request-mapping-template.vtl'
-        response: 'array-response-mapping-template.vtl'    
+        response: 'array-response-mapping-template.vtl'
       - dataSource: Reports
         type: Query
         field: getReport
@@ -280,7 +302,7 @@ custom:
         type: Query
         field: getTaxCodes
         request: 'scanTaxCodes-request-mapping-template.vtl'
-        response: 'array-response-mapping-template.vtl'   
+        response: 'array-response-mapping-template.vtl'
       - dataSource: Accounts
         type: Mutation
         field: updateAccount

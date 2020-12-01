@@ -25,8 +25,10 @@ export function apiGatewayResponse<
     return {
         after: (handler, next) => {
             if (!(handler.response instanceof APIGatewayResponseClass)) {
+                const body: any = JSON.stringify(handler.response);
+
                 handler.response = new APIGatewayResponseClass({
-                    body: handler.response,
+                    body,
                 });
             }
 
@@ -42,20 +44,21 @@ export function apiGatewayResponse<
                 error = Boom.internal(handler.error.message);
                 error.name = 'InternalError';
             }
+            const body: any = JSON.stringify({
+                error: {
+                    type: error.name,
+                    status: error.output.payload.error,
+                    message:
+                        error.output.statusCode === 500
+                            ? undefined
+                            : error.message,
+                    payload: error.data ?? undefined,
+                },
+            });
 
             handler.response = new APIGatewayResponseClass<ErrorResponse>({
                 statusCode: error.output.statusCode,
-                body: {
-                    error: {
-                        type: error.name,
-                        status: error.output.payload.error,
-                        message:
-                            error.output.statusCode === 500
-                                ? undefined
-                                : error.message,
-                        payload: error.data ?? undefined,
-                    },
-                },
+                body,
             });
 
             delete handler.error;

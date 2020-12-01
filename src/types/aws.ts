@@ -122,6 +122,17 @@ export interface GetReportEvent {
     entityType: string;
 }
 
+export interface GetClientIds {
+    clientIds: string[];
+}
+
+export interface CheckRefreshTokenResponse{
+    response: {
+        [key: string]: string;
+    };
+    message: string;
+}
+
 export interface DefaultEvent {
     text: string;
 }
@@ -133,7 +144,6 @@ export interface DeleteClientEvent {
 export interface SyncReportEvent {
     pathParameters: { [clientId: string]: string };
 }
-
 
 export interface SuccessDeleteClientResponse {
     message: string;

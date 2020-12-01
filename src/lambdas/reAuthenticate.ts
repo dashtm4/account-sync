@@ -31,9 +31,5 @@ const rawHandler = async (event: APIGatewayEvent<DefaultEvent>)
 };
 export const handler = middy(rawHandler)
     .use(jsonBodyParser())
-    .use(
-        apiGatewayResponse<
-        APIGatewayEvent<DefaultEvent>,
-        APIGatewayResponse<IntuitAPIResponse>
-        >(),
-    );
+    .use(apiGatewayResponse<APIGatewayEvent<DefaultEvent>,
+    APIGatewayResponse<IntuitAPIResponse>>());

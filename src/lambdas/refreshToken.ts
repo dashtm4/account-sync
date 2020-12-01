@@ -17,10 +17,12 @@ const oauthClient = new OAuthClient({
 });
 
 const rawHandler = async (
-    event: APIGatewayEvent<ATokenEvent>): Promise<APIGatewayResponse<DefaultResponse>> => {
+    event: APIGatewayEvent<ATokenEvent>,
+): Promise<APIGatewayResponse<DefaultResponse>> => {
+    console.log('> refreshToke');
     const { sub: cognitoId } = event.requestContext.authorizer.claims;
     const { responseUri } = event.body;
-
+    console.log('> responseUri', responseUri);
     const { Items: clients } = await dynamoDb.scan({
         TableName: process.env.clientsTable!,
         FilterExpression: 'CognitoId = :cognitoId',

@@ -23,14 +23,16 @@ const oauthClient = new OAuthClient({
 });
 
 const rawHandler = async (
-    event: APIGatewayEvent<ATokenEvent>): Promise<APIGatewayResponse<ClientResponse>> => {
+    event: APIGatewayEvent<ATokenEvent>,
+): Promise<APIGatewayResponse<ClientResponse>> => {
     const { responseUri } = event.body;
-
+    console.log('> storeTokens');
     const { sub: cognitoId } = event.requestContext.authorizer.claims;
     try {
         const authResponse = await oauthClient.createToken(responseUri);
-
+        console.log('> storeToken: authResponse', authResponse);
         const tokens = authResponse.getToken();
+        console.log('> storeToken: tokens', tokens.realmId, cognitoId, process.env.clientsTable!);
 
         const { Items: dbClients } = await dynamoDb.scan({
             TableName: process.env.clientsTable!,
@@ -41,7 +43,24 @@ const rawHandler = async (
             },
         }).promise();
 
+        console.log('> storeTokens: Items', dbClients);
+
         if (dbClients?.length) {
+            // console.log('> dbClients Tokens', dbClients, tokens);
+            // await dynamoDb.update({
+            //     TableName: process.env.clientsTable!,
+            //     Key: { Id: dbClients[0].Id },
+            //     UpdateExpression: 'set #aT = :aToken, #rT = :rToken',
+            //     ExpressionAttributeNames: {
+            //         '#aT': 'AccessToken',
+            //         '#rT': 'RefreshToken',
+            //     },
+            //     ExpressionAttributeValues: {
+            //         ':aToken': tokens.access_token,
+            //         ':rToken': tokens.refresh_token,
+            //     },
+            // }).promise();
+
             return {
                 message: 'Client already added',
                 clientId: dbClients[0].Id!,
