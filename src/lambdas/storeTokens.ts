@@ -43,30 +43,6 @@ const rawHandler = async (
             },
         }).promise();
 
-        console.log('> storeTokens: Items', dbClients);
-
-        if (dbClients?.length) {
-            // console.log('> dbClients Tokens', dbClients, tokens);
-            // await dynamoDb.update({
-            //     TableName: process.env.clientsTable!,
-            //     Key: { Id: dbClients[0].Id },
-            //     UpdateExpression: 'set #aT = :aToken, #rT = :rToken',
-            //     ExpressionAttributeNames: {
-            //         '#aT': 'AccessToken',
-            //         '#rT': 'RefreshToken',
-            //     },
-            //     ExpressionAttributeValues: {
-            //         ':aToken': tokens.access_token,
-            //         ':rToken': tokens.refresh_token,
-            //     },
-            // }).promise();
-
-            return {
-                message: 'Client already added',
-                clientId: dbClients[0].Id!,
-            };
-        }
-
         const { data } = await instance.get(`company/${tokens.realmId}/query?query=select*from CompanyInfo`, {
             headers: {
                 Authorization: `Bearer ${tokens.access_token}`,
@@ -75,6 +51,24 @@ const rawHandler = async (
         });
 
         const companyName = data.QueryResponse.CompanyInfo[0].CompanyName;
+
+        if (dbClients && dbClients.length > 0) {
+            
+            await dynamoDb.update({
+                TableName: process.env.clientsTable!,
+                Key: { Id: dbClients[0].Id!},
+                UpdateExpression: 'set #atoken = :t1, #rtoken = :t2',
+                ExpressionAttributeNames: {
+                    '#atoken': 'AccessToken',
+                    '#rtoken': 'RefreshToken',
+                },
+                ExpressionAttributeValues: {
+                    ':t1': tokens.access_token,
+                    ':t2': tokens.refresh_token,
+                },
+            }).promise();
+            return Promise.resolve({ message: 'Client Token Update'});
+        }
 
         await dynamoDb.put({
             TableName: process.env.clientsTable!,
